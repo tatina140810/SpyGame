@@ -3,7 +3,7 @@ import SnapKit
 
 class RulesViewController: UIViewController {
     
-    private var bacgroundImage: UIImageView = {
+    private var backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .screenshot20250409At101528Pm)
         imageView.contentMode = .scaleAspectFill
@@ -38,8 +38,8 @@ class RulesViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.addSubview(bacgroundImage)
-        bacgroundImage.snp.makeConstraints { make in
+        view.addSubview(backgroundImage)
+        backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         view.addSubview(cardView)

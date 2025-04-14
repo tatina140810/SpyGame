@@ -11,7 +11,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     private var presenter: StartGamePresenter!
     private var isFlipped = false
     
-    private var bacgroundImage: UIImageView = {
+    private var backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .screenshot20250409At101528Pm)
         imageView.contentMode = .scaleAspectFill
@@ -24,44 +24,24 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         view.layer.cornerRadius = 20
         return view
     }()
-    private var frontStackView: UIStackView = {
+    
+    private var frontStackView = makeStackView(borderColor: .white)
+    private var backStackView = makeStackView(borderColor: .white, isHidden: true)
+    private var spyStackView = makeStackView(borderColor: .red, isHidden: true)
+    
+    private static func makeStackView(borderColor: UIColor, isHidden: Bool = false) -> UIStackView {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.spacing = 10
         stackView.layer.cornerRadius = 20
         stackView.layer.borderWidth = 2
-        stackView.layer.borderColor = UIColor.white.cgColor
+        stackView.layer.borderColor = borderColor.cgColor
+        stackView.isHidden = isHidden
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(top: 30, left: 20, bottom: 0, right: 20)
-        
         return stackView
-    }()
-    private var backStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.spacing = 10
-        stackView.layer.cornerRadius = 20
-        stackView.layer.borderWidth = 2
-        stackView.layer.borderColor = UIColor.white.cgColor
-        stackView.isHidden = true
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        
-        return stackView
-    }()
-    private var spyStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.spacing = 10
-        stackView.layer.cornerRadius = 20
-        stackView.layer.borderWidth = 2
-        stackView.layer.borderColor = UIColor.red.cgColor
-        stackView.isHidden = true
-        return stackView
-    }()
+    }
     private let frontImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(resource: .ШПИОН)
@@ -97,7 +77,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         label.numberOfLines = 0
         return label
     }()
-    private let spykWordLabel: UILabel = {
+    private let spyWordLabel: UILabel = {
         let label = UILabel()
         label.text = "you_are_spy".localized
         label.textColor = .red
@@ -124,10 +104,10 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         guard let settings = UserDefaults.standard.loadGameSettings() else {
             fatalError("⚠️ GameSettings не найдены")
         }
-
+        
         let selectedThemes = allThemes.filter { settings.selectedThemeNames.contains($0.nameKey) }
         let selectedWords = selectedThemes.flatMap { $0.words }.shuffled()
-
+        
         self.presenter = StartGamePresenter(
             view: self,
             playersCount: settings.playersCount,
@@ -136,7 +116,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
             time: settings.selectedTime
         )
     }
-
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -154,15 +134,15 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         if self.isMovingFromParent {
             UserDefaults.standard.clearGameSettings()
         }
     }
-
+    
     private func setupUI() {
-        view.addSubview(bacgroundImage)
-        bacgroundImage.snp.makeConstraints { make in
+        view.addSubview(backgroundImage)
+        backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         view.addSubview(cardView)
@@ -182,7 +162,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         backStackView.addArrangedSubview(backWordLabel)
         backStackView.addArrangedSubview(backLabel)
         cardView.addSubview(spyStackView)
-        spyStackView.addArrangedSubview(spykWordLabel)
+        spyStackView.addArrangedSubview(spyWordLabel)
         spyStackView.addArrangedSubview(spyBackLabel )
         frontStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(20)

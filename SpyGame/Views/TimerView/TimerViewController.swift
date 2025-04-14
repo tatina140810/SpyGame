@@ -169,18 +169,17 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     
     @objc private func handleNewGameButtonTapped() {
         guard UserDefaults.standard.loadGameSettings() != nil else {
-            print("❗️Не удалось загрузить настройки")
             return
         }
-
+        
         let newGameVC = StartGameViewController()
-
+        
         if let setupVC = navigationController?.viewControllers.first(where: { $0 is PlayersSetupViewController }) {
             navigationController?.setViewControllers([setupVC, newGameVC], animated: true)
         } else {
             navigationController?.setViewControllers([newGameVC], animated: true)
         }
     }
-
-
+    
+    
 }

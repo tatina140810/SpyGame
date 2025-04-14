@@ -10,23 +10,24 @@ protocol PlayersSetupProtocol {
     func selectAllThemes(from themes: [Theme])
     func toggleThemeSelection(for button: UIButton, isSelected: Bool)
     func startGame()
-    
 }
+
 class PlayersSetupPresenter: PlayersSetupProtocol {
     
     weak var view: PlayersSetupViewProtocol?
     
+    private var playersCount: Int = 3
+    private var spyCount: Int = 1
+    private var selectedThemes: Set<String> = []
+    private var selectedTime: Int = 60
     
     init(view: PlayersSetupViewProtocol? = nil) {
         self.view = view
         loadSavedSettings()
         updateView()
     }
-    private var playersCount: Int = 3
-    private var spyCount: Int = 1
-    private var selectedThemes: [String] = []
-    private var selectedTime: Int = 60
     
+    // MARK: - Player Count
     
     func increasePlayers() {
         if playersCount < 15 {
@@ -42,6 +43,8 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
         }
     }
     
+    // MARK: - Spy Count
+    
     func increaseSpies() {
         if spyCount < 3 {
             spyCount += 1
@@ -56,73 +59,81 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
         }
     }
     
-    func selectTheme(named theme: String) {
-        if selectedThemes.contains(theme) {
-            selectedThemes.removeAll { $0 == theme }
+    // MARK: - Theme Selection
+    
+    func selectTheme(named name: String) {
+        if selectedThemes.contains(name) {
+            selectedThemes.remove(name)
         } else {
-            selectedThemes.append(theme)
+            selectedThemes.insert(name)
         }
     }
     
     func selectAllThemes(from themes: [Theme]) {
-        selectedThemes = themes.map { $0.nameKey }
-    }
-    
-    private func updateView() {
-        view?.updatePlayersCountLabel(playersCount)
-        view?.updateSpyCountLabel(spyCount)
-        view?.highlightSelectedThemes(named: selectedThemes)
+        selectedThemes = Set(themes.map { $0.nameKey })
+        view?.highlightSelectedThemes(named: Array(selectedThemes))
     }
     
     func toggleThemeSelection(for button: UIButton, isSelected: Bool) {
+        guard let title = button.title(for: .normal) else { return }
+        
         if isSelected {
-            button.backgroundColor = .white
-            button.setTitleColor(.darkGreen, for: .normal)
+            selectedThemes.insert(title)
         } else {
-            button.backgroundColor = .clear
-            button.setTitleColor(.white, for: .normal)
+            selectedThemes.remove(title)
         }
+        
+        view?.toggleThemeSelection(for: button, isSelected: isSelected)
     }
+    
+    // MARK: - Time
+    
     func setGameTime(_ seconds: Int) {
         selectedTime = seconds
     }
     
+    // MARK: - Start Game
+    
     func startGame() {
-        let selectedThemesModels = allThemes.filter { selectedThemes.contains($0.nameKey) }
-        
-        if selectedThemesModels.isEmpty {
+        guard !selectedThemes.isEmpty else {
             view?.showAlert(message: "select_at_least_one_category".localized)
             return
         }
         
-        if selectedTime == 0 {
-            view?.showAlert(message: "Выберите время для игры.")
-            return
-        }
+        let matchedThemes = allThemes.filter { selectedThemes.contains($0.nameKey) }
         
         let settings = GameSettings(
             playersCount: playersCount,
             spyCount: spyCount,
-            selectedThemeNames: selectedThemes,
+            selectedThemeNames: Array(selectedThemes),
             selectedTime: selectedTime
         )
+        
         UserDefaults.standard.saveGameSettings(settings)
         
         view?.navigateToGame(playersCount: playersCount,
                              spyCount: spyCount,
-                             selectedThemes: selectedThemesModels,
+                             selectedThemes: matchedThemes,
                              selectedTime: selectedTime)
     }
-    private func loadSavedSettings() {
-        if let saved = UserDefaults.standard.loadGameSettings() {
-            playersCount = saved.playersCount
-            spyCount = saved.spyCount
-            selectedThemes = saved.selectedThemeNames
-            print(selectedThemes)
-            selectedTime = saved.selectedTime
-            print (selectedTime)
-        }
+    
+    // MARK: - Private Helpers
+    
+    private func updateView() {
+        view?.updatePlayersCountLabel(playersCount)
+        view?.updateSpyCountLabel(spyCount)
+        view?.highlightSelectedThemes(named: Array(selectedThemes))
+        view?.highlightedSelectedTime(seconds: selectedTime)
     }
     
+    private func loadSavedSettings() {
+        if let settings = UserDefaults.standard.loadGameSettings() {
+            playersCount = settings.playersCount
+            spyCount = settings.spyCount
+            selectedThemes = Set(settings.selectedThemeNames)
+            selectedTime = settings.selectedTime
+            
+        }
+    }
     
 }

@@ -11,7 +11,7 @@ class LanguageViewController: UIViewController, LanguageViewProtocol {
     var presenter: LanguagePresenterProtocol?
     
     
-    private var bacgroundImage: UIImageView = {
+    private var backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .screenshot20250409At101528Pm)
         imageView.contentMode = .scaleAspectFill
@@ -58,8 +58,8 @@ class LanguageViewController: UIViewController, LanguageViewProtocol {
     }
     
     private func setupUI() {
-        view.addSubview(bacgroundImage)
-        bacgroundImage.snp.makeConstraints { make in
+        view.addSubview(backgroundImage)
+        backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         

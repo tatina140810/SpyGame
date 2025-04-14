@@ -1,9 +1,3 @@
-//
-//  PrivacyPolicyViewController.swift
-//  SpyGame
-//
-//  Created by Tatina Dzhakypbekova on 12/4/2025.
-//
 import UIKit
 import SnapKit
 

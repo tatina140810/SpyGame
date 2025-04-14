@@ -9,6 +9,7 @@ protocol PlayersSetupViewProtocol: AnyObject {
     func showAlert(message: String)
     func toggleThemeSelection(for button: UIButton, isSelected: Bool)
     func highlightSelectedThemes(named: [String])
+    func highlightedSelectedTime(seconds: Int)
 }
 
 class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
@@ -26,16 +27,16 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     var themeButtons: [UIButton] = []
+    var timeButtons: [UIButton] = []
     
     
-    private var bacgroundImage: UIImageView = {
+    private var backgroundImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .screenshot20250409At101528Pm)
         imageView.contentMode = .scaleAspectFill
         imageView.alpha = 0.8
         return imageView
     }()
-  
     private var cardView: UIView = {
         let view = UIView()
         view.backgroundColor = .darkGreen
@@ -221,94 +222,26 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         button.addTarget(self, action: #selector(threeMinutsButtonTapped), for: .touchUpInside)
         return button
     }()
-    private lazy var allThemesButton: UIButton = {
+    private func makeThemeButton(titleKey: String, action: Selector) -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("all_themes".localized, for: .normal)
+        button.setTitle(titleKey.localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(allThemesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: action, for: .touchUpInside)
         return button
-    }()
-    private lazy var foodThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("food".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(foodThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var animalsThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("animals".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(animalsThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var jobsThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("jobs".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(jobsThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var transportThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("transport".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(transportThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var moviesThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("movies".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(moviesThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var surrealThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("surreal".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(surrealThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var adaultsThemesButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("adult".localized, for: .normal)
-        button.backgroundColor = .clear
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
-        button.addTarget(self, action: #selector(adaultsThemesButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    }
+    
+    private lazy var allThemesButton = makeThemeButton(titleKey: "all_themes", action: #selector(allThemesButtonTapped))
+    private lazy var foodThemesButton = makeThemeButton(titleKey: "food", action: #selector(foodThemesButtonTapped))
+    private lazy var animalsThemesButton = makeThemeButton(titleKey: "animals", action: #selector(animalsThemesButtonTapped))
+    private lazy var jobsThemesButton = makeThemeButton(titleKey: "jobs", action: #selector(jobsThemesButtonTapped))
+    private lazy var transportThemesButton = makeThemeButton(titleKey: "transport", action: #selector(transportThemesButtonTapped))
+    private lazy var moviesThemesButton = makeThemeButton(titleKey: "movies", action: #selector(moviesThemesButtonTapped))
+    private lazy var surrealThemesButton = makeThemeButton(titleKey: "surreal", action: #selector(surrealThemesButtonTapped))
+    private lazy var adaultsThemesButton = makeThemeButton(titleKey: "adult", action: #selector(adaultsThemesButtonTapped))
     
     private var themeLabel: UILabel = {
         let label = UILabel()
@@ -337,14 +270,25 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         navigationItem.backButtonTitle = ""
         presenter = PlayersSetupPresenter(view: self)
         setupUI()
-        updateSelectedTimeButton(selectedButton: oneMinutButton)
+        applySavedSettings()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "gear"),
+            style: .plain,
+            target: self,
+            action: #selector(settingsButtonTapped)
+        )
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-               image: UIImage(systemName: "questionmark.app"),
-               style: .plain,
-               target: self,
-               action: #selector(rulesButtonTapped)
-           )
+            image: UIImage(systemName: "questionmark.app"),
+            style: .plain,
+            target: self,
+            action: #selector(rulesButtonTapped)
+        )
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.hidesBackButton = true
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         startButton.applyNeonGradient(borderColor: .lightBlue, innerColor: .darkGreen)
@@ -352,11 +296,11 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         
     }
     private func setupUI() {
-        view.addSubview(bacgroundImage)
-        bacgroundImage.snp.makeConstraints { make in
+        view.addSubview(backgroundImage)
+        backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-    
+        
         view.addSubview(startButton)
         startButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-40)
@@ -380,7 +324,6 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.addArrangedSubview(spyLabel)
         stackView.addArrangedSubview(spyStackView)
         
-        stackView.addArrangedSubview(timeStackView)
         stackView.addArrangedSubview(themeLabel)
         stackView.addArrangedSubview(allThemesButton)
         stackView.addArrangedSubview(firstLineThemesStackView)
@@ -411,12 +354,27 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         timeStackView.addArrangedSubview(oneMinutButton)
         timeStackView.addArrangedSubview(twoMinutsButton)
         timeStackView.addArrangedSubview(threeMinutsButton)
+        themeButtons = [
+            allThemesButton, foodThemesButton, animalsThemesButton,
+            adaultsThemesButton, transportThemesButton, moviesThemesButton,
+            surrealThemesButton, jobsThemesButton
+        ]
+        
+        timeButtons = [oneMinutButton, twoMinutsButton, threeMinutsButton]
+        
         
     }
     @objc private func rulesButtonTapped() {
         let vc = RulesViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
+    @objc private func settingsButtonTapped() {
+        let mainVC = MainViewController()
+        let presenter = MainPresenter(view: mainVC)
+        mainVC.presenter = presenter
+        navigationController?.setViewControllers([mainVC], animated: true)
+    }
+
     @objc private func plusButtonTapped() {
         presenter?.increasePlayers()
     }
@@ -522,7 +480,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         let vc = StartGameViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
     private func updateSelectedTimeButton(selectedButton: UIButton) {
         let buttons = [oneMinutButton, twoMinutsButton, threeMinutsButton]
         
@@ -550,14 +508,78 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
             button.setTitleColor(.white, for: .normal)
         }
     }
+    private func themeKey(for button: UIButton) -> String? {
+        switch button {
+        case foodThemesButton: return "theme_food"
+        case animalsThemesButton: return "theme_animals"
+        case transportThemesButton: return "theme_transport"
+        case jobsThemesButton: return "theme_jobs"
+        case moviesThemesButton: return "theme_movies"
+        case surrealThemesButton: return "theme_surreal"
+        case adaultsThemesButton: return "theme_adult"
+        default: return nil
+        }
+    }
+    private func timeKey(for button: UIButton) -> String? {
+        switch button {
+        case oneMinutButton: return "minute_1"
+        case twoMinutsButton: return "minute_2"
+        case threeMinutsButton: return "minute_3"
+        default: return nil
+        }
+    }
+    private func applySavedSettings() {
+        guard let settings = UserDefaults.standard.loadGameSettings() else { return }
+
+        // 🔘 Отметить выбранные темы
+        highlightSelectedThemes(named: settings.selectedThemeNames)
+
+        // ⏱️ Отметить выбранное время
+        switch settings.selectedTime {
+        case 60:
+            updateSelectedTimeButton(selectedButton: oneMinutButton)
+        case 120:
+            updateSelectedTimeButton(selectedButton: twoMinutsButton)
+        case 180:
+            updateSelectedTimeButton(selectedButton: threeMinutsButton)
+        default:
+            break
+        }
+    }
+
+
     func highlightSelectedThemes(named selectedNames: [String]) {
         for button in themeButtons {
-            let title = button.title(for: .normal) ?? ""
-            let isSelected = selectedNames.contains(title)
+            
+            guard let titleKey = themeKey(for: button) else { continue }
+            
+            let isSelected = selectedNames.contains(titleKey)
             presenter?.toggleThemeSelection(for: button, isSelected: isSelected)
         }
     }
+    func highlightedSelectedTime(seconds: Int) {
+        let selectedButton: UIButton?
+
+        switch seconds {
+        case 60:
+            selectedButton = oneMinutButton
+        case 120:
+            selectedButton = twoMinutsButton
+        case 180:
+            selectedButton = threeMinutsButton
+        default:
+            selectedButton = nil
+        }
+
+        if let button = selectedButton {
+            updateSelectedTimeButton(selectedButton: button)
+        }
+    }
+
+
+    }
+
     
     
-}
+
 

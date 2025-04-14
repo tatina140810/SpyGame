@@ -1,5 +1,9 @@
 "new_game" = "New Game";
 "rules" = "Game Rules";
+"clear_Used_Words" = "Clear used words";
+"done" = "Done";
+"used_words_cleared" = "Used words history has been cleared.";
+
 "game_settings" = "Game Setup";
 "players_count:" = "Number of players";
 "spies_count:" = "Number of spies";

@@ -5,15 +5,30 @@ protocol StartGamePresenterProtocol {
     func viewDidLoad()
 }
 
-class StartGamePresenter {
+class StartGamePresenter: StartGamePresenterProtocol {
+    
     private weak var view: StartGameViewProtocol?
     private var model: GameModel
-    private var isShowingCard = false 
+    private var isShowingCard = false
+    
+    private var allWords: [String]
+    private var usedWords: [String]
     
     init(view: StartGameViewProtocol, playersCount: Int, spyCount: Int, selectedWords: [String], time: Int) {
         self.view = view
-        let commonWord = selectedWords.randomElement() ?? "word"
+        self.allWords = selectedWords
+        self.usedWords = UserDefaults.standard.loadUsedWords()
+        
+        if usedWords.count >= allWords.count {
+            usedWords.removeAll()
+        }
+        
+        let commonWord = Self.pickUniqueWord(from: selectedWords, excluding: usedWords)
+        usedWords.append(commonWord)
+        UserDefaults.standard.saveUsedWords(usedWords)
+        
         let spyIndexes = Set((0..<playersCount).shuffled().prefix(spyCount))
+        
         self.model = GameModel(
             playersCount: playersCount,
             spyCount: spyCount,
@@ -23,9 +38,16 @@ class StartGamePresenter {
             currentPlayerIndex: 0
         )
     }
+    
+    static func pickUniqueWord(from all: [String], excluding used: [String]) -> String {
+        let remaining = all.filter { !used.contains($0) }
+        print("📉 Оставшиеся слова: \(remaining)")
+        return remaining.randomElement() ?? all.randomElement() ?? "word"
+    }
+    
     func viewDidLoad() {
-            view?.showFrontCard(withInstruction: "word_instruction".localized)
-        }
+        view?.showFrontCard(withInstruction: "word_instruction".localized)
+    }
     
     func handleCardTap() {
         if isShowingCard {
@@ -38,8 +60,8 @@ class StartGamePresenter {
                 view?.showFrontCard(withInstruction: "word_instruction".localized)
             }
         } else {
-            let isCurrentPlayerSpy = model.spyIndexes.contains(model.currentPlayerIndex)
-            if isCurrentPlayerSpy {
+            let isSpy = model.spyIndexes.contains(model.currentPlayerIndex)
+            if isSpy {
                 view?.showSpyCard()
             } else {
                 view?.showWordCard(withWord: model.commonWord.localized)
@@ -47,5 +69,4 @@ class StartGamePresenter {
             isShowingCard = true
         }
     }
-    
 }
