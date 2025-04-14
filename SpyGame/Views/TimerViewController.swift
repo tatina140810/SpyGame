@@ -33,7 +33,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     }()
     private let startGameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Игра началась!"
+        label.text = "game_started!".localized
         label.textColor = .white
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
@@ -43,7 +43,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     
     private let endGameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Игра окончена!"
+        label.text = "game_over".localized
         label.textColor = .white
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
@@ -54,7 +54,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     
     private lazy var newGameButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Нaчать новую игру", for: .normal)
+        button.setTitle("start_new_game".localized, for: .normal)
         button.layer.cornerRadius = 20
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.black.cgColor
@@ -78,6 +78,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
         navigationItem.hidesBackButton = true
         setupUI()
         presenter?.viewDidLoad()
+        UIApplication.shared.isIdleTimerDisabled = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -167,8 +168,19 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     }
     
     @objc private func handleNewGameButtonTapped() {
-        presenter?.startNewGame()
-        let newGameVC = PlayersSetupViewController(presenter: PlayersSetupPresenter())
-        navigationController?.setViewControllers([newGameVC], animated: true)
+        guard UserDefaults.standard.loadGameSettings() != nil else {
+            print("❗️Не удалось загрузить настройки")
+            return
+        }
+
+        let newGameVC = StartGameViewController()
+
+        if let setupVC = navigationController?.viewControllers.first(where: { $0 is PlayersSetupViewController }) {
+            navigationController?.setViewControllers([setupVC, newGameVC], animated: true)
+        } else {
+            navigationController?.setViewControllers([newGameVC], animated: true)
+        }
     }
+
+
 }

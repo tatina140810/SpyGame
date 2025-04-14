@@ -69,8 +69,8 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     }()
     private let frontLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hажмите на карточку и запомните слово"
-        label.textColor = .darkGreen
+        label.text = "word_instruction".localized
+        label.textColor = .white
         label.font = .systemFont(ofSize: 24, weight: .bold)
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -79,7 +79,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     
     private let backWordLabel: UILabel = {
         let label = UILabel()
-        label.text = "Слово"
+        label.text = "word".localized
         label.textColor = .white
         label.font = .systemFont(ofSize: 32, weight: .semibold)
         label.textAlignment = .center
@@ -89,8 +89,8 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     }()
     private let backLabel: UILabel = {
         let label = UILabel()
-        label.text = "Нажмите на карточку и передайте следующему игроку"
-        label.textColor = .darkGreen
+        label.text = "word_instruction_next".localized
+        label.textColor = .white
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.textAlignment = .center
         
@@ -99,7 +99,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     }()
     private let spykWordLabel: UILabel = {
         let label = UILabel()
-        label.text = "ТЫ ШПИОН!"
+        label.text = "you_are_spy".localized
         label.textColor = .red
         label.font = .systemFont(ofSize: 32, weight: .semibold)
         label.textAlignment = .center
@@ -109,25 +109,34 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     }()
     private let spyBackLabel: UILabel = {
         let label = UILabel()
-        label.text = "Нажмите на карточку и передайте следующему игроку"
-        label.textColor = .darkGreen
+        label.text = "word_instruction_next".localized
+        label.textColor = .white
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.textAlignment = .center
         
         label.numberOfLines = 0
         return label
     }()
-    init(playersCount: Int, spyCount: Int, selectedThemes: [Theme], time: Int) {
+    
+    init() {
         super.init(nibName: nil, bundle: nil)
+        
+        guard let settings = UserDefaults.standard.loadGameSettings() else {
+            fatalError("⚠️ GameSettings не найдены")
+        }
+
+        let selectedThemes = allThemes.filter { settings.selectedThemeNames.contains($0.nameKey) }
         let selectedWords = selectedThemes.flatMap { $0.words }.shuffled()
+
         self.presenter = StartGamePresenter(
             view: self,
-            playersCount: playersCount,
-            spyCount: spyCount,
+            playersCount: settings.playersCount,
+            spyCount: settings.spyCount,
             selectedWords: selectedWords,
-            time: time
+            time: settings.selectedTime
         )
     }
+
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -143,6 +152,14 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         super.viewDidLayoutSubviews()
         cardView.applyNeonGradient(borderColor: .lightBlue, innerColor: .darkGreen)
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if self.isMovingFromParent {
+            UserDefaults.standard.clearGameSettings()
+        }
+    }
+
     private func setupUI() {
         view.addSubview(bacgroundImage)
         bacgroundImage.snp.makeConstraints { make in

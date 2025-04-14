@@ -18,24 +18,7 @@ class RulesViewController: UIViewController {
     }()
     private lazy var rulesTextLabel: UILabel = {
         let label = UILabel()
-        label.text = """
-- Всем игрокам даётся одно слово. 
- 
-- Шпионы не знают слово — только надпись *«Ты шпион»*.  
-
-- Игроки по кругу называют **ассоциации** к слову.  
-
-- Шпионы стараются **не выдать себя**.  
-
-- Если шпионы раскрыты — побеждают игроки.  
-
-- Если шпионы не раскрыты за отведеное время — победа шпионов!  
-
-- Шпион может **угадать слово** в любой момент и сразу победить.
-
-Приятной игры!
-
-"""
+        label.text = "game_rules_text".localized
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.textAlignment = .left
@@ -62,7 +45,7 @@ class RulesViewController: UIViewController {
         view.addSubview(cardView)
         cardView.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
-            make.height.equalTo(600)
+            make.height.equalTo(630)
             make.width.equalTo(340)
         }
         cardView.addSubview(rulesTextLabel)

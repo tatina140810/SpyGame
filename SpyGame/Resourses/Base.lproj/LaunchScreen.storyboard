@@ -19,10 +19,10 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Screenshot 2025-04-09 at 10.15.28 pm" translatesAutoresizingMaskIntoConstraints="NO" id="Pim-DQ-nJU">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ШПИОН" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sx1-IB-13n">
-                                <rect key="frame" x="98" y="587" width="196" height="96"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="316" verticalHuggingPriority="251" text="launch_title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sx1-IB-13n">
+                                <rect key="frame" x="35" y="675" width="323" height="61"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="96" id="hbh-T6-w0e"/>
+                                    <constraint firstAttribute="height" constant="61" id="cYM-Rz-kpm"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Impact" family="Impact" pointSize="50"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -32,12 +32,12 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Sx1-IB-13n" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="98" id="1B0-fX-X4h"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Sx1-IB-13n" secondAttribute="trailing" constant="99" id="BV9-lz-KBD"/>
+                            <constraint firstItem="Sx1-IB-13n" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="35" id="5bm-pM-MRG"/>
                             <constraint firstItem="Pim-DQ-nJU" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="Gr4-Nv-Rdt"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Sx1-IB-13n" secondAttribute="bottom" constant="135" id="Iw7-L0-6uN"/>
                             <constraint firstItem="Pim-DQ-nJU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="K3v-Bt-5rv"/>
                             <constraint firstAttribute="bottom" secondItem="Pim-DQ-nJU" secondAttribute="bottom" id="dAc-g4-Ho7"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Sx1-IB-13n" secondAttribute="bottom" constant="82" id="mnL-c2-Zgm"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Sx1-IB-13n" secondAttribute="trailing" constant="35" id="wif-iI-kWe"/>
                             <constraint firstItem="Pim-DQ-nJU" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="xXZ-uj-zjZ"/>
                         </constraints>
                     </view>

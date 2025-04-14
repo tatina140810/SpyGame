@@ -7,6 +7,8 @@ protocol PlayersSetupViewProtocol: AnyObject {
     func handleStartButtonTapped()
     func navigateToGame(playersCount: Int, spyCount: Int, selectedThemes: [Theme], selectedTime: Int)
     func showAlert(message: String)
+    func toggleThemeSelection(for button: UIButton, isSelected: Bool)
+    func highlightSelectedThemes(named: [String])
 }
 
 class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
@@ -23,6 +25,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    var themeButtons: [UIButton] = []
     
     
     private var bacgroundImage: UIImageView = {
@@ -44,9 +47,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
-        stackView.spacing = 3
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 5, left: 0, bottom: 10, right: 0)
+        stackView.spacing = 5
         return stackView
     }()
     private var playersStackView: UIStackView = {
@@ -64,7 +65,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         label.textColor = .white
         label.font = .systemFont(ofSize: 24, weight: .bold)
         label.textAlignment = .center
-        label.text = "Настройка игры"
+        label.text = "game_settings".localized
         return label
     }()
     private var playersLabel: UILabel = {
@@ -73,13 +74,14 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Количество игроков:"
+        label.text = "players_count:".localized
         return label
     }()
     private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("+", for: .normal)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.backgroundColor = .clear
+        button.tintColor = .white
         button.setTitleColor(UIColor.white, for: .normal)
         button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         return button
@@ -93,8 +95,9 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var minusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("-", for: .normal)
+        button.setImage(UIImage(systemName: "minus"), for: .normal)
         button.backgroundColor = .clear
+        button.tintColor = .white
         button.setTitleColor(UIColor.white, for: .normal)
         button.addTarget(self, action: #selector(minusButtonTapped), for: .touchUpInside)
         return button
@@ -114,9 +117,6 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 5
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        
         return stackView
     }()
     private var secondLineThemesStackView: UIStackView = {
@@ -124,8 +124,6 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.axis = .horizontal
         stackView.distribution = .fillProportionally
         stackView.spacing = 5
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         
         return stackView
     }()
@@ -134,8 +132,6 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 5
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         
         return stackView
     }()
@@ -145,13 +141,14 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Количество шпионов:"
+        label.text = "spies_count:".localized
         return label
     }()
     private lazy var plusSpyButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("+", for: .normal)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.backgroundColor = .clear
+        button.tintColor = .white
         button.setTitleColor(UIColor.white, for: .normal)
         button.addTarget(self, action: #selector(plusSpyButtonTapped), for: .touchUpInside)
         return button
@@ -166,8 +163,9 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var minusSpyButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("-", for: .normal)
+        button.setImage(UIImage(systemName: "minus"), for: .normal)
         button.backgroundColor = .clear
+        button.tintColor = .white
         button.setTitleColor(UIColor.white, for: .normal)
         button.addTarget(self, action: #selector(minusSpyButtonTapped), for: .touchUpInside)
         return button
@@ -177,8 +175,6 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 5
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         
         return stackView
     }()
@@ -188,12 +184,12 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Время:"
+        label.text = "time:".localized
         return label
     }()
     private lazy var oneMinutButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("1 минутa", for: .normal)
+        button.setTitle("minute_1".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -204,7 +200,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var twoMinutsButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("2 минуты", for: .normal)
+        button.setTitle("minute_2".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -216,7 +212,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     
     private lazy var threeMinutsButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("3 минуты", for: .normal)
+        button.setTitle("minute_3".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -227,7 +223,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var allThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Все темы", for: .normal)
+        button.setTitle("all_themes".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -238,7 +234,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var foodThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Eда", for: .normal)
+        button.setTitle("food".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -249,7 +245,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var animalsThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Животные", for: .normal)
+        button.setTitle("animals".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -260,7 +256,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var jobsThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Профессии", for: .normal)
+        button.setTitle("jobs".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -271,7 +267,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var transportThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Транспорт", for: .normal)
+        button.setTitle("transport".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -282,7 +278,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var moviesThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Кино", for: .normal)
+        button.setTitle("movies".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -293,7 +289,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var surrealThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Сюрреализм", for: .normal)
+        button.setTitle("surreal".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -304,7 +300,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }()
     private lazy var adaultsThemesButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("18+", for: .normal)
+        button.setTitle("adult".localized, for: .normal)
         button.backgroundColor = .clear
         button.setTitleColor(UIColor.white, for: .normal)
         button.layer.cornerRadius = 20
@@ -320,14 +316,13 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Выбор категорий:"
+        label.text = "category_selection:".localized
         return label
     }()
     private lazy var startButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("New Game", for: .normal)
+        button.setTitle("new_game".localized, for: .normal)
         button.backgroundColor = .clear
-        button.setTitle("Нaчать игру", for: .normal)
         button.layer.cornerRadius = 20
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.black.cgColor
@@ -377,7 +372,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         }
         cardView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalToSuperview().inset(15)
         }
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(playersLabel)
@@ -395,31 +390,22 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         stackView.addArrangedSubview(timeStackView)
         
         playersStackView.addArrangedSubview(minusButton)
-        
-        
         playersStackView.addArrangedSubview(playersCountLabel)
         playersStackView.addArrangedSubview(plusButton)
         
         spyStackView.addArrangedSubview(minusSpyButton)
-        
-        
-        
         spyStackView.addArrangedSubview(spyCountLabel)
         spyStackView.addArrangedSubview(plusSpyButton)
         
         firstLineThemesStackView.addArrangedSubview(allThemesButton)
         firstLineThemesStackView.addArrangedSubview(foodThemesButton)
-        
         firstLineThemesStackView.addArrangedSubview(animalsThemesButton)
         
         secondLineThemesStackView.addArrangedSubview(adaultsThemesButton)
-        
         secondLineThemesStackView.addArrangedSubview(transportThemesButton)
-        
         secondLineThemesStackView.addArrangedSubview(moviesThemesButton)
         
         thirdLineThemesStackView.addArrangedSubview(surrealThemesButton)
-        
         thirdLineThemesStackView.addArrangedSubview(jobsThemesButton)
         
         timeStackView.addArrangedSubview(oneMinutButton)
@@ -457,43 +443,43 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     }
     
     @objc private func foodThemesButtonTapped(){
-        presenter?.selectTheme(named: "Еда")
+        presenter?.selectTheme(named: "theme_food")
         let isSelected = foodThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: foodThemesButton, isSelected: isSelected)
     }
     
     @objc private func animalsThemesButtonTapped(){
-        presenter?.selectTheme(named: "Животные")
+        presenter?.selectTheme(named: "theme_animals")
         let isSelected = animalsThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: animalsThemesButton, isSelected: isSelected)
     }
     
     @objc private func transportThemesButtonTapped(){
-        presenter?.selectTheme(named: "Транспорт")
+        presenter?.selectTheme(named: "theme_transport")
         let isSelected = transportThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: transportThemesButton, isSelected: isSelected)
     }
     
     @objc private func jobsThemesButtonTapped() {
-        presenter?.selectTheme(named: "Профессии")
+        presenter?.selectTheme(named: "theme_jobs")
         let isSelected = jobsThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: jobsThemesButton, isSelected: isSelected)
     }
     
     @objc private func moviesThemesButtonTapped() {
-        presenter?.selectTheme(named: "Фильмы")
+        presenter?.selectTheme(named: "theme_movies")
         let isSelected = moviesThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: moviesThemesButton, isSelected: isSelected)
     }
     
     @objc private func surrealThemesButtonTapped() {
-        presenter?.selectTheme(named: "Сюрреализм")
+        presenter?.selectTheme(named: "theme_surreal")
         let isSelected = surrealThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: surrealThemesButton, isSelected: isSelected)
     }
     
     @objc private func adaultsThemesButtonTapped() {
-        presenter?.selectTheme(named: "18+ Слова")
+        presenter?.selectTheme(named: "theme_adult")
         let isSelected = adaultsThemesButton.backgroundColor == .clear
         presenter?.toggleThemeSelection(for: adaultsThemesButton, isSelected: isSelected)
     }
@@ -523,19 +509,20 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     func updateSpyCountLabel(_ count: Int){
         spyCountLabel.text = "\(count)"
     }
-    func updateTime(_ time: String){
-        
-    }
     
     func navigateToGame(playersCount: Int, spyCount: Int, selectedThemes: [Theme], selectedTime: Int) {
-        let vc = StartGameViewController(
+        let settings = GameSettings(
             playersCount: playersCount,
             spyCount: spyCount,
-            selectedThemes: selectedThemes,
-            time: selectedTime
+            selectedThemeNames: selectedThemes.map { $0.nameKey },
+            selectedTime: selectedTime
         )
+        UserDefaults.standard.saveGameSettings(settings)
+        
+        let vc = StartGameViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
+
     private func updateSelectedTimeButton(selectedButton: UIButton) {
         let buttons = [oneMinutButton, twoMinutsButton, threeMinutsButton]
         
@@ -550,10 +537,27 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         selectedButton.layer.borderColor = UIColor.darkGreen.cgColor
     }
     func showAlert(message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "error".localized, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "ОК", style: .default))
         present(alert, animated: true)
     }
+    func toggleThemeSelection(for button: UIButton, isSelected: Bool) {
+        if isSelected {
+            button.backgroundColor = .white
+            button.setTitleColor(.darkGreen, for: .normal)
+        } else {
+            button.backgroundColor = .clear
+            button.setTitleColor(.white, for: .normal)
+        }
+    }
+    func highlightSelectedThemes(named selectedNames: [String]) {
+        for button in themeButtons {
+            let title = button.title(for: .normal) ?? ""
+            let isSelected = selectedNames.contains(title)
+            presenter?.toggleThemeSelection(for: button, isSelected: isSelected)
+        }
+    }
+    
     
 }
 

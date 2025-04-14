@@ -12,7 +12,7 @@ class StartGamePresenter {
     
     init(view: StartGameViewProtocol, playersCount: Int, spyCount: Int, selectedWords: [String], time: Int) {
         self.view = view
-        let commonWord = selectedWords.randomElement() ?? "Слово"
+        let commonWord = selectedWords.randomElement() ?? "word"
         let spyIndexes = Set((0..<playersCount).shuffled().prefix(spyCount))
         self.model = GameModel(
             playersCount: playersCount,
@@ -23,6 +23,9 @@ class StartGamePresenter {
             currentPlayerIndex: 0
         )
     }
+    func viewDidLoad() {
+            view?.showFrontCard(withInstruction: "word_instruction".localized)
+        }
     
     func handleCardTap() {
         if isShowingCard {
@@ -32,14 +35,14 @@ class StartGamePresenter {
             if model.currentPlayerIndex >= model.playersCount {
                 view?.navigateToTimer(time: model.time)
             } else {
-                view?.showFrontCard(withInstruction: "Нажмите на карточку и запомните слово")
+                view?.showFrontCard(withInstruction: "word_instruction".localized)
             }
         } else {
             let isCurrentPlayerSpy = model.spyIndexes.contains(model.currentPlayerIndex)
             if isCurrentPlayerSpy {
                 view?.showSpyCard()
             } else {
-                view?.showWordCard(withWord: model.commonWord)
+                view?.showWordCard(withWord: model.commonWord.localized)
             }
             isShowingCard = true
         }

@@ -8,11 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		80077666CDC33970B3C2DD6F /* Pods_SpyGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC9982BA6A858BB83F6D28F0 /* Pods_SpyGame.framework */; };
+		AFE5EFC12DABE31B005A3E44 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFE5EFC02DABE31B005A3E44 /* Localizable.strings */; };
+		AFE5EFC42DABE324005A3E44 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFE5EFC32DABE324005A3E44 /* Localizable.strings */; };
+		AFE5EFC72DABE32F005A3E44 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFE5EFC62DABE32F005A3E44 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6D69EEBC052D6926A3B4F1B2 /* Pods-SpyGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpyGame.debug.xcconfig"; path = "Target Support Files/Pods-SpyGame/Pods-SpyGame.debug.xcconfig"; sourceTree = "<group>"; };
 		AF4CB22C2DA69709002AF33D /* SpyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFE5EFBF2DABE31B005A3E44 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AFE5EFC22DABE324005A3E44 /* ky-KG */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ky-KG"; path = "ky-KG.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		AFE5EFC52DABE32F005A3E44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D9AC04AABDA62908D8BBB210 /* Pods-SpyGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpyGame.release.xcconfig"; path = "Target Support Files/Pods-SpyGame/Pods-SpyGame.release.xcconfig"; sourceTree = "<group>"; };
 		DC9982BA6A858BB83F6D28F0 /* Pods_SpyGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpyGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -70,6 +76,9 @@
 		AF4CB2232DA69709002AF33D = {
 			isa = PBXGroup;
 			children = (
+				AFE5EFC32DABE324005A3E44 /* Localizable.strings */,
+				AFE5EFC02DABE31B005A3E44 /* Localizable.strings */,
+				AFE5EFC62DABE32F005A3E44 /* Localizable.strings */,
 				AF4CB22E2DA69709002AF33D /* SpyGame */,
 				AF4CB22D2DA69709002AF33D /* Products */,
 				82C93D323CB24F93BDAB334B /* Pods */,
@@ -131,6 +140,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
+				"ky-KG",
+				"en-GB",
 			);
 			mainGroup = AF4CB2232DA69709002AF33D;
 			minimizedProjectReferenceProxies = 1;
@@ -149,6 +161,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFE5EFC42DABE324005A3E44 /* Localizable.strings in Resources */,
+				AFE5EFC12DABE31B005A3E44 /* Localizable.strings in Resources */,
+				AFE5EFC72DABE32F005A3E44 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +220,33 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		AFE5EFC02DABE31B005A3E44 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AFE5EFBF2DABE31B005A3E44 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		AFE5EFC32DABE324005A3E44 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AFE5EFC22DABE324005A3E44 /* ky-KG */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		AFE5EFC62DABE32F005A3E44 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AFE5EFC52DABE32F005A3E44 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		AF4CB2402DA6970B002AF33D /* Debug */ = {
@@ -280,6 +322,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -343,6 +386,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

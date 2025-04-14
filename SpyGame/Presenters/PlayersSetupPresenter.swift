@@ -19,6 +19,7 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
     
     init(view: PlayersSetupViewProtocol? = nil) {
         self.view = view
+        loadSavedSettings()
         updateView()
     }
     private var playersCount: Int = 3
@@ -64,12 +65,13 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
     }
     
     func selectAllThemes(from themes: [Theme]) {
-        selectedThemes = themes.map { $0.name }
+        selectedThemes = themes.map { $0.nameKey }
     }
     
     private func updateView() {
         view?.updatePlayersCountLabel(playersCount)
         view?.updateSpyCountLabel(spyCount)
+        view?.highlightSelectedThemes(named: selectedThemes)
     }
     
     func toggleThemeSelection(for button: UIButton, isSelected: Bool) {
@@ -86,10 +88,10 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
     }
     
     func startGame() {
-        let selectedThemesModels = allThemes.filter { selectedThemes.contains($0.name) }
+        let selectedThemesModels = allThemes.filter { selectedThemes.contains($0.nameKey) }
         
         if selectedThemesModels.isEmpty {
-            view?.showAlert(message: "Выберите хотя бы одну категорию для игры.")
+            view?.showAlert(message: "select_at_least_one_category".localized)
             return
         }
         
@@ -98,9 +100,29 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
             return
         }
         
+        let settings = GameSettings(
+            playersCount: playersCount,
+            spyCount: spyCount,
+            selectedThemeNames: selectedThemes,
+            selectedTime: selectedTime
+        )
+        UserDefaults.standard.saveGameSettings(settings)
+        
         view?.navigateToGame(playersCount: playersCount,
                              spyCount: spyCount,
                              selectedThemes: selectedThemesModels,
                              selectedTime: selectedTime)
     }
+    private func loadSavedSettings() {
+        if let saved = UserDefaults.standard.loadGameSettings() {
+            playersCount = saved.playersCount
+            spyCount = saved.spyCount
+            selectedThemes = saved.selectedThemeNames
+            print(selectedThemes)
+            selectedTime = saved.selectedTime
+            print (selectedTime)
+        }
+    }
+    
+    
 }
