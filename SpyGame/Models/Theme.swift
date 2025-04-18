@@ -50,17 +50,18 @@ let moviesTheme = Theme(nameKey: "theme_movies", words: [
     "word_kungfu_panda", "word_zootopia", "word_frozen", "word_incredibles", "word_wall_e", "word_coco", "word_smeshariki", "word_bremen_musicians", "word_nu_pogodi", "word_hedgehog_fog"
 ])
 
-let surrealTheme = Theme(nameKey: "theme_surreal", words: [
-    "word_dream_maze", "word_crispy_dawn", "word_dancing_cloud", "word_orange_silence", "word_metal_sparrow",
-    "word_talking_suitcase", "word_inverted_reality", "word_floating_stairs", "word_creaky_memory", "word_teapot_of_time",
-    "word_moon_fridge", "word_whispering_sidewalk", "word_forgotten_symphony", "word_sand_glasses", "word_marble_cloud",
-    "word_crystal_alarm", "word_folding_sky", "word_dancing_lamp_skeleton", "word_memory_whirlwind", "word_dream_telescope",
-    "word_stairless_ladder", "word_singing_stone", "word_thought_fan", "word_closed_rainbow", "word_electric_bush",
-    "word_mirror_no_reflection", "word_pollen_of_past", "word_sticky_noon", "word_sighing_chair", "word_cookie_with_secret",
-    "word_conversation_in_glass", "word_shoes_without_feet", "word_thunder_in_pocket", "word_memory_ball", "word_slippery_calendar",
-    "word_bridge_to_nowhere", "word_sniffing_tv", "word_rainbow_tear", "word_ceiling_door", "word_babbling_lamp",
-    "word_fish_in_tree", "word_window_underwater", "word_fog_slippers", "word_laughing_wall", "word_letter_in_sand",
-    "word_wind_puzzle", "word_paper_echo", "word_clock_no_hands", "word_star_under_table", "word_silent_bulb"
+
+let travelTheme = Theme(nameKey: "theme_travel", words: [
+    "word_airport_terminal", "word_luggage_tag", "word_passport_stamp", "word_boarding_pass", "word_window_seat",
+    "word_customs_control", "word_lost_baggage", "word_travel_adapter", "word_guidebook", "word_currency_exchange",
+    "word_hiking_boots", "word_souvenir_shop", "word_local_market", "word_street_food", "word_travel_diary",
+    "word_postcard_home", "word_eiffel_tower", "word_city_map", "word_sunset_beach", "word_mountain_peak",
+    "word_hostel_bunk", "word_travel_backpack", "word_metro_ticket", "word_local_language", "word_train_station",
+    "word_flight_delay", "word_night_bus", "word_hotel_lobby", "word_cultural_festival", "word_airplane_meal",
+    "word_landing_announcement", "word_tourist_spot", "word_cruise_ship", "word_sightseeing_tour", "word_travel_insurance",
+    "word_border_crossing", "word_nature_trail", "word_travel_photo", "word_travel_guide", "word_travel_snacks",
+    "word_city_square", "word_national_park", "word_beach_resort", "word_lake_view", "word_walking_tour",
+    "word_compass", "word_cabin_bag", "word_train_tracks", "word_road_trip", "word_map_pin"
 ])
 
 
@@ -81,5 +82,5 @@ let allThemes: [Theme] = [
     jobsTheme,
     transportTheme,
     moviesTheme,
-    surrealTheme,
+    travelTheme,
 ] + adultsThemes

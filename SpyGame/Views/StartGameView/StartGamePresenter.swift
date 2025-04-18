@@ -41,7 +41,6 @@ class StartGamePresenter: StartGamePresenterProtocol {
     
     static func pickUniqueWord(from all: [String], excluding used: [String]) -> String {
         let remaining = all.filter { !used.contains($0) }
-        print("📉 Оставшиеся слова: \(remaining)")
         return remaining.randomElement() ?? all.randomElement() ?? "word"
     }
     

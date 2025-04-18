@@ -240,7 +240,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
     private lazy var jobsThemesButton = makeThemeButton(titleKey: "jobs", action: #selector(jobsThemesButtonTapped))
     private lazy var transportThemesButton = makeThemeButton(titleKey: "transport", action: #selector(transportThemesButtonTapped))
     private lazy var moviesThemesButton = makeThemeButton(titleKey: "movies", action: #selector(moviesThemesButtonTapped))
-    private lazy var surrealThemesButton = makeThemeButton(titleKey: "surreal", action: #selector(surrealThemesButtonTapped))
+    private lazy var travelThemesButton = makeThemeButton(titleKey: "travel", action: #selector(travelThemesButtonTapped))
     private lazy var adaultsThemesButton = makeThemeButton(titleKey: "adult", action: #selector(adaultsThemesButtonTapped))
     
     private var themeLabel: UILabel = {
@@ -348,7 +348,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         secondLineThemesStackView.addArrangedSubview(transportThemesButton)
         secondLineThemesStackView.addArrangedSubview(moviesThemesButton)
         
-        thirdLineThemesStackView.addArrangedSubview(surrealThemesButton)
+        thirdLineThemesStackView.addArrangedSubview(travelThemesButton)
         thirdLineThemesStackView.addArrangedSubview(jobsThemesButton)
         
         timeStackView.addArrangedSubview(oneMinutButton)
@@ -357,7 +357,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         themeButtons = [
             allThemesButton, foodThemesButton, animalsThemesButton,
             adaultsThemesButton, transportThemesButton, moviesThemesButton,
-            surrealThemesButton, jobsThemesButton
+            travelThemesButton, jobsThemesButton
         ]
         
         timeButtons = [oneMinutButton, twoMinutsButton, threeMinutsButton]
@@ -392,7 +392,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         
         let allButtons = [
             foodThemesButton, animalsThemesButton, transportThemesButton,
-            jobsThemesButton, moviesThemesButton, surrealThemesButton, adaultsThemesButton
+            jobsThemesButton, moviesThemesButton, travelThemesButton, adaultsThemesButton
         ]
         
         allButtons.forEach {
@@ -430,10 +430,10 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         presenter?.toggleThemeSelection(for: moviesThemesButton, isSelected: isSelected)
     }
     
-    @objc private func surrealThemesButtonTapped() {
-        presenter?.selectTheme(named: "theme_surreal")
-        let isSelected = surrealThemesButton.backgroundColor == .clear
-        presenter?.toggleThemeSelection(for: surrealThemesButton, isSelected: isSelected)
+    @objc private func travelThemesButtonTapped() {
+        presenter?.selectTheme(named: "theme_travel")
+        let isSelected = travelThemesButton.backgroundColor == .clear
+        presenter?.toggleThemeSelection(for: travelThemesButton, isSelected: isSelected)
     }
     
     @objc private func adaultsThemesButtonTapped() {
@@ -515,7 +515,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         case transportThemesButton: return "theme_transport"
         case jobsThemesButton: return "theme_jobs"
         case moviesThemesButton: return "theme_movies"
-        case surrealThemesButton: return "theme_surreal"
+        case travelThemesButton: return "theme_travel"
         case adaultsThemesButton: return "theme_adult"
         default: return nil
         }
