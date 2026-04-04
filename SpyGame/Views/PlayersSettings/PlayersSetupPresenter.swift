@@ -136,8 +136,11 @@ class PlayersSetupPresenter: PlayersSetupProtocol {
         }
         
         
-        let matchedThemes = allThemes.filter { selectedThemes.contains($0.nameKey) }
-        
+        var matchedThemes = allThemes.filter { selectedThemes.contains($0.nameKey) }
+        if selectedThemes.contains("theme_custom"), let custom = customTheme {
+            matchedThemes.append(custom)
+        }
+
         let selectedWords = getAllWords(from: Array(selectedThemes))
         
         

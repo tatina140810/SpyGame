@@ -30,9 +30,9 @@
           "locale" : "ru"
         }
       ],
-      "productID" : "full_version",
-      "referenceName" : "test",
-      "type" : "Consumable"
+      "productID" : "wordgen_premium",
+      "referenceName" : "Premium unlock",
+      "type" : "Non-Consumable"
     }
   ],
   "settings" : {

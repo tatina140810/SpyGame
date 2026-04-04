@@ -89,6 +89,13 @@ class TimerViewController: UIViewController, TimerViewProtocol {
         presenter?.viewDidLoad()
         UIApplication.shared.isIdleTimerDisabled = true
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent || isBeingDismissed {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -202,9 +209,9 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     
     
     deinit {
+        UIApplication.shared.isIdleTimerDisabled = false
         audioPlayer?.stop()
         audioPlayer = nil
-        
     }
     func pauseSound() {
         audioPlayer?.pause()

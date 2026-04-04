@@ -15,20 +15,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
     init(words: [String]) {
         self.words = words
         super.init(nibName: nil, bundle: nil)
-        
         UserDefaults.standard.set(words, forKey: "last_selected_words")
-        
-        guard let settings = UserDefaults.standard.loadGameSettings() else {
-            fatalError("⚠️ GameSettings не найдены")
-        }
-        
-        self.presenter = StartGamePresenter(
-            view: self,
-            playersCount: settings.playersCount,
-            spyCount: settings.spyCount,
-            selectedWords: words,
-            time: settings.selectedTime
-        )
     }
     
     
@@ -132,14 +119,13 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = ""
         setupUI()
-        
-        availableWords = words.shuffled()
-        
-        // 🔥 Создаём presenter только здесь и на основе переданных `words`
+
         guard let settings = UserDefaults.standard.loadGameSettings() else {
-            fatalError("⚠️ GameSettings не найдены")
+            presentMissingSettingsAndPop()
+            return
         }
-        
+
+        availableWords = words.shuffled()
         presenter = StartGamePresenter(
             view: self,
             playersCount: settings.playersCount,
@@ -147,6 +133,18 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
             selectedWords: availableWords,
             time: settings.selectedTime
         )
+    }
+
+    private func presentMissingSettingsAndPop() {
+        let alert = UIAlertController(
+            title: "error".localized,
+            message: "game_settings_missing".localized,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "done".localized, style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        })
+        present(alert, animated: true)
     }
     
     override func viewDidLayoutSubviews() {

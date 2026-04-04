@@ -372,6 +372,14 @@ Unlock the full version to continue!";
 "buy_button_title" = "Buy";
 "restore_purchase" = "Restore Purchase";
 
+"store_product_unavailable" = "This product is not available right now. Check your connection or try again later.";
+"store_purchase_failed" = "The purchase could not be completed. Please try again.";
+"store_purchase_unverified" = "We could not verify this purchase. Check your Apple ID or contact support.";
+"store_purchase_pending" = "This purchase is waiting for approval (for example, Ask to Buy).";
+"store_restore_nothing_found" = "No purchases were found to restore.";
+"store_restore_failed" = "Restore could not be completed. Check your connection and try again.";
+"game_settings_missing" = "Game settings are missing. Return to setup and start the game again.";
+
 
 
 

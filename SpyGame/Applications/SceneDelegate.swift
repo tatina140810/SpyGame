@@ -15,10 +15,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
-    func sceneWillDisconnect(_ scene: UIScene) {
-        UserDefaults.standard.clearGameSettings()
-    }
-    
     func sceneDidDisconnect(_ scene: UIScene) {
     }
     
