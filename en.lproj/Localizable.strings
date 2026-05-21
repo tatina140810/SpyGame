@@ -628,3 +628,5 @@ Unlock the full version to continue!";
 "word_nightclub" = "Nightclub";
 "word_casino" = "Casino";
 "word_tattoo" = "Tattoo";
+
+"backend_not_configured" = "Custom-topic generation is temporarily unavailable. Please try again later.";

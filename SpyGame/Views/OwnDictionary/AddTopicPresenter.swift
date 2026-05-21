@@ -31,12 +31,17 @@ class AddTopicPresenter: AddTopicPresenterProtocol {
     
     func didTapGenerate(topic: String?) {
         guard let topic = topic, !topic.isEmpty else {
-            
-            view?.showAlert(title: "Ошибка", message: "Введите тему")
+
+            view?.showAlert(title: "error".localized, message: "enter_topic".localized)
             return
         }
-        
-        
+
+        guard AddTopicModel.isBackendConfigured else {
+            view?.showAlert(title: "error".localized,
+                            message: "backend_not_configured".localized)
+            return
+        }
+
         guard model.canMakeRequest() else {
             
             view?.showAlert(title: "limit_reached_title".localized,

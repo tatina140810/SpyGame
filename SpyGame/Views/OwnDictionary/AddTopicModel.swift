@@ -3,94 +3,89 @@ import Security
 
 protocol AddTopicModelProtocol {
     func canMakeRequest() -> Bool
-        func incrementRequestCount()
-        func remainingRequests() -> Int
-        func generateWords(topic: String, language: String, completion: @escaping ([String]) -> Void)
+    func incrementRequestCount()
+    func remainingRequests() -> Int
+    func generateWords(topic: String, language: String, completion: @escaping ([String]) -> Void)
 }
+
 private enum RequestLimitKeys {
     static let dailyRequestCount = "dailyRequestCountKeychain"
     static let lastResetDate = "lastResetDate"
-    
 }
-private let APIKEY = "🔐_REDACTED"
 
+/// URL of the backend proxy that wraps OpenAI. Replace `nil` with the full URL of your
+/// deployed function (for example `https://your-app.vercel.app/api/generate-words`)
+/// once the backend in `backend/api/generate-words.js` is deployed.
+///
+/// Until this is non-nil, custom-topic generation returns an empty list and the UI
+/// shows the `backend_not_configured` message. Never embed the OpenAI key here —
+/// the binary is public via the App Store.
+private let backendURL: URL? = nil
 
 final class AddTopicModel: AddTopicModelProtocol {
     private let maxRequests = 5
 
-        func canMakeRequest() -> Bool {
-            let now = Date()
-            let lastReset = readDateFromKeychain(key: RequestLimitKeys.lastResetDate) ?? now
+    static var isBackendConfigured: Bool { backendURL != nil }
 
-            if !Calendar.current.isDate(now, inSameDayAs: lastReset) {
-                saveDateToKeychain(date: now, key: RequestLimitKeys.lastResetDate)
-                saveIntToKeychain(value: 0, key: RequestLimitKeys.dailyRequestCount)
-            }
+    func canMakeRequest() -> Bool {
+        let now = Date()
+        let lastReset = readDateFromKeychain(key: RequestLimitKeys.lastResetDate) ?? now
 
-            let count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
-            return count < maxRequests
+        if !Calendar.current.isDate(now, inSameDayAs: lastReset) {
+            saveDateToKeychain(date: now, key: RequestLimitKeys.lastResetDate)
+            saveIntToKeychain(value: 0, key: RequestLimitKeys.dailyRequestCount)
         }
 
-        func incrementRequestCount() {
-            var count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
-            count += 1
-            saveIntToKeychain(value: count, key: RequestLimitKeys.dailyRequestCount)
+        let count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
+        return count < maxRequests
+    }
+
+    func incrementRequestCount() {
+        var count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
+        count += 1
+        saveIntToKeychain(value: count, key: RequestLimitKeys.dailyRequestCount)
+    }
+
+    func remainingRequests() -> Int {
+        let count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
+        return max(0, maxRequests - count)
+    }
+
+    // MARK: - Backend request
+
+    func generateWords(topic: String, language: String, completion: @escaping ([String]) -> Void) {
+        guard let url = backendURL else {
+            // No backend yet — caller surfaces a localized error.
+            completion([])
+            return
         }
 
-        func remainingRequests() -> Int {
-            let count = readIntFromKeychain(key: RequestLimitKeys.dailyRequestCount)
-            return max(0, maxRequests - count)
+        let parameters: [String: Any] = [
+            "topic": topic,
+            "language": language
+        ]
+
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters) else {
+            completion([])
+            return
         }
 
-        // MARK: - API Request
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = httpBody
 
-        func generateWords(topic: String, language: String, completion: @escaping ([String]) -> Void) {
-            let apiKey = APIKEY
-            let prompt = """
-            Создай массив из 40 слов на тему «\(topic)» на языке \(language). Верни только JSON-массив строк. Никакого дополнительного текста.
-            """
-
-            let parameters: [String: Any] = [
-                "model": "gpt-3.5-turbo",
-                "messages": [["role": "user", "content": prompt]],
-                "temperature": 0.7
-            ]
-
-            guard let url = URL(string: "https://api.openai.com/v1/chat/completions"),
-                  let httpBody = try? JSONSerialization.data(withJSONObject: parameters) else {
+        URLSession.shared.dataTask(with: request) { data, _, _ in
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let words = json["words"] as? [String] else {
                 completion([])
                 return
             }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = httpBody
-
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data else {
-                    completion([])
-                    return
-                }
-
-                do {
-                    let result = try JSONDecoder().decode(OpenAIResponse.self, from: data)
-                    let rawText = result.choices.first?.message.content ?? ""
-
-                    guard let jsonData = rawText.data(using: .utf8),
-                          let words = try? JSONDecoder().decode([String].self, from: jsonData) else {
-                        completion([])
-                        return
-                    }
-
-                    completion(words)
-                } catch {
-                    completion([])
-                }
-            }.resume()
-        }
+            completion(words)
+        }.resume()
     }
+}
 
 private func saveIntToKeychain(value: Int, key: String) {
     saveToKeychain(value: "\(value)", key: key)
