@@ -199,6 +199,20 @@ OpenAI ключ из клиента полностью удалён.
    несколько VC выше в стеке — вызывать явно ДО pop, не полагаться на
    lifecycle. Подвох исправлен в Multiplayer, но если будут новые
    мульти-стек выходы — помните.
+9. **StoreKit await в обработчиках UI зависает в симуляторе под
+   `simctl launch`.** `Transaction.currentEntitlements` /
+   `Product.products(for:)` / `product.purchase()` могут висеть много
+   секунд, если симулятор запущен НЕ через Xcode Run и нет ни StoreKit
+   Testing config, ни sandbox-аккаунта. Решения:
+   - Для UI-гейтинга (например, кнопка «Добавь свою тему») использовать
+     **синхронный** `PremiumIAP.isUnlocked()` — он читает кеш в
+     UserDefaults и возвращается мгновенно. Async-обновление делается
+     один раз на старте в AppDelegate и через Transaction.updates
+     listener.
+   - Для теста реальной покупки в симуляторе — запускать через
+     Xcode Run (Cmd+R), не через `simctl launch`. В схеме
+     `SpyGame.xcscheme` прописан `StoreKitConfigurationFileReference` на
+     `TestStoreKit.storekit`, который Xcode подхватывает при Run.
 
 ## Стиль кода / договорённости
 

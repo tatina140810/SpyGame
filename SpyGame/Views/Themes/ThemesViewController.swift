@@ -247,15 +247,14 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
     }
 
     @objc private func addYourTopicButtonTapped() {
+        // Rely on the cached premium flag. The cache is refreshed on launch and by the
+        // Transaction.updates listener; doing another await here can hang for many
+        // seconds when StoreKit can't reach the App Store (e.g. simulator launched via
+        // `simctl` without a StoreKit Testing config), and the button looks dead.
         if PremiumIAP.isUnlocked() {
             openAddTopicScreen()
-            return
-        }
-        Task {
-            let isUnlocked = await PremiumIAP.refreshUnlockedState()
-            await MainActor.run {
-                if isUnlocked { openAddTopicScreen() } else { showPaywall() }
-            }
+        } else {
+            showPaywall()
         }
     }
 
