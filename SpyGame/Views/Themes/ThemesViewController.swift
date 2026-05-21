@@ -18,7 +18,9 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
     
     private let allThemeKeys = [
         "theme_food", "theme_animals", "theme_jobs",
-        "theme_transport", "theme_movies", "theme_travel", "theme_custom"
+        "theme_transport", "theme_movies", "theme_travel",
+        "theme_sports", "theme_celebrities", "theme_countries",
+        "theme_tv_shows", "theme_music", "theme_custom"
     ]
     private var customThemeTitle: String = {
         return UserDefaults.standard.string(forKey: "custom_theme_title") ?? "theme_custom".localized

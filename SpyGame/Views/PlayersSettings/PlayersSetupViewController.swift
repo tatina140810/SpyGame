@@ -39,6 +39,11 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         "theme_transport",
         "theme_movies",
         "theme_travel",
+        "theme_sports",
+        "theme_celebrities",
+        "theme_countries",
+        "theme_tv_shows",
+        "theme_music",
     ]
     
     
