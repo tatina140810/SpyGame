@@ -27,14 +27,56 @@ enum PremiumIAP {
     }
 
     /// Whether the user has an active **verified** entitlement for the premium product.
+    /// Async — talks to StoreKit. Use `isUnlocked()` for fast UI checks.
     static func hasVerifiedEntitlement() async -> Bool {
         for await entitlement in Transaction.currentEntitlements {
             guard case .verified(let transaction) = entitlement else { continue }
-            if transaction.productID == productID {
+            if transaction.productID == productID, transaction.revocationDate == nil {
                 return true
             }
         }
         return false
+    }
+
+    /// Synchronous fast check for UI gating. Reads cached unlock flag written by
+    /// `refreshUnlockedState()` and the transaction listener.
+    static func isUnlocked() -> Bool {
+        UserDefaults.standard.isFullVersionUnlocked()
+    }
+
+    /// Refreshes the cached unlock flag from StoreKit. Safe to call from anywhere.
+    @discardableResult
+    static func refreshUnlockedState() async -> Bool {
+        let unlocked = await hasVerifiedEntitlement()
+        await MainActor.run {
+            if unlocked {
+                UserDefaults.standard.unlockFullVersion()
+            } else {
+                UserDefaults.standard.lockFullVersion()
+            }
+        }
+        return unlocked
+    }
+
+    /// Starts listening to `Transaction.updates`. Must be called once at app launch
+    /// and the returned task kept alive for the lifetime of the app.
+    static func startTransactionListener() -> Task<Void, Never> {
+        Task.detached {
+            for await result in Transaction.updates {
+                guard case .verified(let transaction) = result else { continue }
+                if transaction.productID == productID {
+                    let stillValid = transaction.revocationDate == nil
+                    await MainActor.run {
+                        if stillValid {
+                            UserDefaults.standard.unlockFullVersion()
+                        } else {
+                            UserDefaults.standard.lockFullVersion()
+                        }
+                    }
+                }
+                await transaction.finish()
+            }
+        }
     }
 
     enum PremiumIAPError: Error {

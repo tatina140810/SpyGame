@@ -266,14 +266,14 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
     }
     
     @objc private func addYourTopicButtonTapped() {
-        
+        if PremiumIAP.isUnlocked() {
+            openAddTopicScreen()
+            return
+        }
         Task {
-            let isUnlocked = await AppDelegate.checkEntitlements()
-            
-            if isUnlocked {
-                openAddTopicScreen()
-            } else {
-                showPaywall()
+            let isUnlocked = await PremiumIAP.refreshUnlockedState()
+            await MainActor.run {
+                if isUnlocked { openAddTopicScreen() } else { showPaywall() }
             }
         }
     }
@@ -305,8 +305,13 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
     }
     
     private func showPaywall() {
-        let paywallVC = PaywallViewController() 
-        navigationController?.pushViewController(paywallVC, animated: true)
+        let paywallVC = PaywallViewController()
+        paywallVC.onPurchaseSuccess = { [weak self] in
+            self?.openAddTopicScreen()
+        }
+        let nav = UINavigationController(rootViewController: paywallVC)
+        nav.modalPresentationStyle = .formSheet
+        present(nav, animated: true)
     }
 }
 

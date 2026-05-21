@@ -381,6 +381,26 @@
 "store_restore_failed" = "Калыбына келтирүү ишке ашкан жок. Туташууну текшерип кайра аракет кылыңыз.";
 "game_settings_missing" = "Оюн орнотуулары табылган жок. Орнотууларга кайтып, оюнду кайра баштаңыз.";
 
+// Multiplayer
+"play_together" = "Чогуу ойноо";
+"create_room" = "Бөлмө түзүү";
+"join_room" = "Бөлмөгө кирүү";
+"room_code" = "Бөлмө коду";
+"waiting_for_players" = "Оюнчулар күтүлүүдө...";
+"start_game" = "Оюнду баштоо";
+"player_of" = "Оюнчу %d / %d";
+"player_disconnected" = "Оюнчу ажырады";
+"enter_room_code" = "4 санды киргизиңиз";
+"join" = "Кирүү";
+"players_in_room" = "Бөлмөдөгү оюнчулар";
+"connecting" = "Туташуу...";
+"waiting_for_host" = "Хост баштаганын күтүүдө...";
+"host_left" = "Хост оюндан чыкты";
+"premium_required_for_players" = "5+ оюнчу үчүн премиум керек";
+"ready" = "Даяр";
+"waiting_for_others" = "Башка оюнчуларды күтүүдө...";
+"leave_room" = "Бөлмөдөн чыгуу";
+
 
 
 

@@ -24,7 +24,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AF4CB23E2DA6970B002AF33D /* Exceptions for "SpyGame" folder in "SpyGame" target */ = {
+		8B1C70FA2FBE238B007274AE /* Exceptions for "SpyGame" folder in "SpyGame" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -37,7 +37,7 @@
 		AF4CB22E2DA69709002AF33D /* SpyGame */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				AF4CB23E2DA6970B002AF33D /* Exceptions for "SpyGame" folder in "SpyGame" target */,
+				8B1C70FA2FBE238B007274AE /* Exceptions for "SpyGame" folder in "SpyGame" target */,
 			);
 			path = SpyGame;
 			sourceTree = "<group>";
@@ -209,6 +209,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H26KGNHNNP;
@@ -245,6 +246,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H26KGNHNNP;

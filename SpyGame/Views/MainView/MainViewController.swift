@@ -2,6 +2,7 @@ import UIKit
 
 protocol MainViewProtocol: AnyObject {
     func navigateToNewGame()
+    func navigateToPlayTogether()
     func navigateToLanguage()
     func navigateToRules()
     func presentPrivacyPolicy()
@@ -20,6 +21,7 @@ class MainViewController: UIViewController, MainViewProtocol {
     }()
     
     private lazy var newGameButton = makeButton(titleKey: "new_game", action: #selector(handleNewGame))
+    private lazy var playTogetherButton = makeButton(titleKey: "play_together", action: #selector(handlePlayTogether))
     private lazy var languageButton = makeButton(titleKey: "language_selection", action: #selector(handleLanguage))
     private lazy var rulesButton = makeButton(titleKey: "rules", action: #selector(handleRules))
     
@@ -41,7 +43,7 @@ class MainViewController: UIViewController, MainViewProtocol {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        [newGameButton, languageButton, rulesButton].forEach {
+        [newGameButton, playTogetherButton, languageButton, rulesButton].forEach {
             $0.applyNeonGradient(borderColor: .lightBlue, innerColor: .darkGreen)
         }
     }
@@ -61,7 +63,7 @@ class MainViewController: UIViewController, MainViewProtocol {
             backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        let buttons = [newGameButton, languageButton, rulesButton, privacyPolicyButton]
+        let buttons = [newGameButton, playTogetherButton, languageButton, rulesButton, privacyPolicyButton]
         
         for button in buttons {
             button.translatesAutoresizingMaskIntoConstraints = false
@@ -74,9 +76,10 @@ class MainViewController: UIViewController, MainViewProtocol {
         }
         
         NSLayoutConstraint.activate([
-            newGameButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
-            
-            languageButton.topAnchor.constraint(equalTo: newGameButton.bottomAnchor, constant: 24),
+            newGameButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40),
+
+            playTogetherButton.topAnchor.constraint(equalTo: newGameButton.bottomAnchor, constant: 24),
+            languageButton.topAnchor.constraint(equalTo: playTogetherButton.bottomAnchor, constant: 24),
             rulesButton.topAnchor.constraint(equalTo: languageButton.bottomAnchor, constant: 24),
             privacyPolicyButton.topAnchor.constraint(equalTo: rulesButton.bottomAnchor, constant: 24)
         ])
@@ -95,15 +98,21 @@ class MainViewController: UIViewController, MainViewProtocol {
     }
     
     @objc private func handleNewGame() { presenter.didTapNewGame() }
+    @objc private func handlePlayTogether() { presenter.didTapPlayTogether() }
     @objc private func handleLanguage() { presenter.didTapLanguage() }
     @objc private func handleRules() { presenter.didTapRules() }
     @objc private func handlePrivacy() { presenter.didTapPrivacy() }
-    
-    
+
+
     func navigateToNewGame() {
         let presenter = PlayersSetupPresenter()
         let vc = PlayersSetupViewController(presenter: presenter)
         presenter.view = vc
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    func navigateToPlayTogether() {
+        let vc = RoomSetupViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -380,6 +380,26 @@ Unlock the full version to continue!";
 "store_restore_failed" = "Restore could not be completed. Check your connection and try again.";
 "game_settings_missing" = "Game settings are missing. Return to setup and start the game again.";
 
+// Multiplayer
+"play_together" = "Play Together";
+"create_room" = "Create Room";
+"join_room" = "Join Room";
+"room_code" = "Room Code";
+"waiting_for_players" = "Waiting for players...";
+"start_game" = "Start Game";
+"player_of" = "Player %d of %d";
+"player_disconnected" = "A player disconnected";
+"enter_room_code" = "Enter 4-digit code";
+"join" = "Join";
+"players_in_room" = "Players in room";
+"connecting" = "Connecting...";
+"waiting_for_host" = "Waiting for host to start...";
+"host_left" = "The host left the game";
+"premium_required_for_players" = "Premium is required for more than 4 players";
+"ready" = "Ready";
+"waiting_for_others" = "Waiting for other players...";
+"leave_room" = "Leave Room";
+
 
 
 

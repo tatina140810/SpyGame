@@ -159,7 +159,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
         
         timerView.start(duration: Double(time))
         timerView.onTimerFinished = { [weak presenter] in
-            presenter?.timerTick()
+            presenter?.timerDidFinish()
         }
     }
     

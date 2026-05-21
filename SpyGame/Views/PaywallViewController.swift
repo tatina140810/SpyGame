@@ -5,6 +5,9 @@ final class PaywallViewController: UIViewController {
 
     var onPurchaseSuccess: (() -> Void)?
 
+    private var cachedProduct: Product?
+    private var isProcessing = false
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "full_version".localized
@@ -40,10 +43,17 @@ final class PaywallViewController: UIViewController {
         return button
     }()
 
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.hidesWhenStopped = true
+        return view
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupLayout()
+        setupCloseButton()
         animateEntrance()
 
         purchaseButton.addTarget(self, action: #selector(purchaseTapped), for: .touchUpInside)
@@ -53,7 +63,7 @@ final class PaywallViewController: UIViewController {
     }
 
     private func setupLayout() {
-        let stack = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel, purchaseButton, restoreButton])
+        let stack = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel, purchaseButton, activityIndicator, restoreButton])
         stack.axis = .vertical
         stack.spacing = 20
         stack.alignment = .center
@@ -72,6 +82,18 @@ final class PaywallViewController: UIViewController {
         ])
     }
 
+    private func setupCloseButton() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: self,
+            action: #selector(closeTapped)
+        )
+    }
+
+    @objc private func closeTapped() {
+        dismiss(animated: true)
+    }
+
     private func animateEntrance() {
         view.alpha = 0
         view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -81,10 +103,15 @@ final class PaywallViewController: UIViewController {
         }
     }
 
-    /// Warms the StoreKit cache so the purchase sheet opens faster.
+    /// Warms the StoreKit cache and updates the price label.
     private func prefetchProductsForCaching() async {
         do {
-            _ = try await PremiumIAP.loadProduct()
+            let product = try await PremiumIAP.loadProduct()
+            await MainActor.run {
+                self.cachedProduct = product
+                let priceTitle = "\("buy_button_title".localized) — \(product.displayPrice)"
+                self.purchaseButton.setTitle(priceTitle, for: .normal)
+            }
         } catch {
             #if DEBUG
             print("[PremiumIAP] prefetch failed: \(error.localizedDescription)")
@@ -92,14 +119,31 @@ final class PaywallViewController: UIViewController {
         }
     }
 
+    private func setProcessing(_ processing: Bool) {
+        isProcessing = processing
+        purchaseButton.isEnabled = !processing
+        restoreButton.isEnabled = !processing
+        purchaseButton.alpha = processing ? 0.5 : 1.0
+        restoreButton.alpha = processing ? 0.5 : 1.0
+        if processing { activityIndicator.startAnimating() } else { activityIndicator.stopAnimating() }
+    }
+
     @objc private func purchaseTapped() {
+        guard !isProcessing else { return }
         Task { await purchaseWordgenPremium() }
     }
 
     @MainActor
     private func purchaseWordgenPremium() async {
+        setProcessing(true)
+        defer { setProcessing(false) }
         do {
-            let product = try await PremiumIAP.loadProduct()
+            let product: Product
+            if let cached = cachedProduct {
+                product = cached
+            } else {
+                product = try await PremiumIAP.loadProduct()
+            }
             let result = try await product.purchase()
             switch result {
             case .success(let verification):
@@ -125,11 +169,14 @@ final class PaywallViewController: UIViewController {
     }
 
     @objc private func restoreTapped() {
+        guard !isProcessing else { return }
         Task { await restorePurchase() }
     }
 
     @MainActor
     private func restorePurchase() async {
+        setProcessing(true)
+        defer { setProcessing(false) }
         do {
             try await AppStore.sync()
             if await PremiumIAP.hasVerifiedEntitlement() {
@@ -169,3 +216,4 @@ final class PaywallViewController: UIViewController {
         present(alert, animated: true)
     }
 }
+

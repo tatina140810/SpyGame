@@ -28,4 +28,7 @@ extension UserDefaults {
     func unlockFullVersion() {
         set(true, forKey: GameAccessKey.fullVersionUnlocked.rawValue)
     }
+    func lockFullVersion() {
+        set(false, forKey: GameAccessKey.fullVersionUnlocked.rawValue)
+    }
 }

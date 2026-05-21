@@ -1,5 +1,4 @@
 import Foundation
-import StoreKit
 
 protocol AddTopicPresenterProtocol: AnyObject {
     func viewDidLoad()
@@ -100,15 +99,6 @@ class AddTopicPresenter: AddTopicPresenterProtocol {
         let allowedCharacterSet = CharacterSet.letters
         let wordCharacterSet = CharacterSet(charactersIn: trimmed)
         return allowedCharacterSet.isSuperset(of: wordCharacterSet)
-    }
-    static func checkEntitlements() async -> Bool {
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result,
-               transaction.productID == "wordgen_premium" {
-                return true
-            }
-        }
-        return false
     }
 }
 

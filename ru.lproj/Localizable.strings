@@ -381,6 +381,26 @@
 "store_restore_failed" = "Не удалось восстановить покупки. Проверьте подключение и попробуйте снова.";
 "game_settings_missing" = "Настройки игры не найдены. Вернитесь к настройкам и начните игру снова.";
 
+// Multiplayer
+"play_together" = "Играть вместе";
+"create_room" = "Создать комнату";
+"join_room" = "Войти в комнату";
+"room_code" = "Код комнаты";
+"waiting_for_players" = "Ждём игроков...";
+"start_game" = "Начать игру";
+"player_of" = "Игрок %d из %d";
+"player_disconnected" = "Игрок отключился";
+"enter_room_code" = "Введите 4 цифры";
+"join" = "Войти";
+"players_in_room" = "Игроки в комнате";
+"connecting" = "Подключение...";
+"waiting_for_host" = "Ждём пока хост начнёт...";
+"host_left" = "Хост вышел из игры";
+"premium_required_for_players" = "Премиум нужен для 5 и более игроков";
+"ready" = "Готов";
+"waiting_for_others" = "Ждём остальных игроков...";
+"leave_room" = "Покинуть комнату";
+
 
 
 
