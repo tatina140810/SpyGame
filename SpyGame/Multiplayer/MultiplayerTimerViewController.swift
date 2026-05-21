@@ -238,9 +238,9 @@ final class MultiplayerTimerViewController: UIViewController {
     }
 
     @objc private func handleLeaveRoom() {
-        // Pop all the way back. HostRoomViewController below us has a viewWillDisappear
-        // hook that calls session.disconnect() — which sends .hostLeft to every guest
-        // before tearing the session down, so they all end up back on the main screen too.
+        // Disconnect explicitly — `viewWillDisappear` on mid-stack VCs isn't reliable
+        // during a `popToRoot`. `disconnect()` is idempotent now.
+        session.disconnect()
         navigationController?.popToRootViewController(animated: true)
     }
 

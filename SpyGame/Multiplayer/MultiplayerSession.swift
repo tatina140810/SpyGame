@@ -92,6 +92,10 @@ final class MultiplayerSession: NSObject {
     /// Set this from the host UI before calling `startHosting(roomCode:)`.
     var maxAllowedPeers: Int = .max
 
+    /// Guards against re-entering `disconnect()` while the .hostLeft packet is still
+    /// being flushed — otherwise guests would receive the alert twice.
+    private var isDisconnecting = false
+
     weak var delegate: MultiplayerSessionDelegate?
 
     override init() {
@@ -173,6 +177,8 @@ final class MultiplayerSession: NSObject {
     // MARK: - Shared
 
     func disconnect() {
+        guard !isDisconnecting else { return }
+        isDisconnecting = true
         // We're the host iff we have an active room code — `connectionState` flips to
         // `.connected` as soon as a guest joins, so we can't rely on it here.
         let amHost = hostingRoomCode != nil
@@ -195,6 +201,7 @@ final class MultiplayerSession: NSObject {
         stopBrowsing()
         connectedPeers.removeAll()
         updateState(.idle)
+        isDisconnecting = false
     }
 
     // MARK: - Private helpers

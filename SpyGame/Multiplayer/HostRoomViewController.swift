@@ -129,8 +129,10 @@ final class HostRoomViewController: UIViewController {
     }
 
     @objc private func handleLeaveRoom() {
-        // viewWillDisappear (isMovingFromParent == true) calls session.disconnect(),
-        // which sends .hostLeft to every guest before tearing the session down.
+        // Disconnect explicitly here — UIKit doesn't always deliver `viewWillDisappear`
+        // to mid-stack VCs during a `popToRoot`, so the lifecycle hook below isn't
+        // reliable. `disconnect()` is now idempotent, so calling it twice is fine.
+        session.disconnect()
         navigationController?.popToRootViewController(animated: true)
     }
 
