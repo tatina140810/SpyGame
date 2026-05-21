@@ -35,17 +35,23 @@ export default async function handler(req, res) {
   }
 
   const prompt =
-    `You are generating words for the party game "Spy Hunt".\n` +
+    `You are generating words for the family party game "Spy Hunt", distributed on the App Store.\n` +
     `Topic: "${topic.trim()}".\n` +
     `Language code: "${safeLanguage}".\n\n` +
-    `Rules:\n` +
-    `- Exactly 40 distinct items.\n` +
-    `- Each item is a single noun in the nominative singular (no verbs, no adjectives, no adverbs).\n` +
+    `Content policy (strict):\n` +
+    `- Do NOT generate any sexual, pornographic, or romantically explicit words.\n` +
+    `- Do NOT generate words referring to violence, weapons, gore, suicide, self-harm, or abuse.\n` +
+    `- Do NOT generate words referring to illegal drugs, illegal activities, or hate speech.\n` +
+    `- Do NOT generate slurs, insults, or profanity in any language.\n` +
+    `- If the topic itself violates this policy or you cannot generate a safe list, return an empty JSON array: [].\n\n` +
+    `Format rules:\n` +
+    `- Exactly 40 distinct items (or an empty array if the topic is unsafe).\n` +
+    `- Each item is a single noun in the nominative singular (no verbs, adjectives, or adverbs).\n` +
     `- No duplicates and no different inflected forms of the same word.\n` +
     `- Avoid multi-word phrases. Single common compounds (like "ice cream") are allowed only if there is no shorter equivalent.\n` +
-    `- Every item must be a concept that an average adult in the target language would recognise instantly.\n` +
+    `- Every item must be a concept an average adult in the target language would recognise instantly.\n` +
     `- Each item should have several obvious associations so a player can hint at it without saying it.\n\n` +
-    `Return ONLY a JSON array of 40 strings. No surrounding text, no numbering, no explanations, no markdown.`;
+    `Return ONLY a JSON array of strings. No surrounding text, no numbering, no explanations, no markdown.`;
 
   try {
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {

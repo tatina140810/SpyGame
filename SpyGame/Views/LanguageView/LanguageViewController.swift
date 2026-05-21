@@ -11,7 +11,7 @@ class LanguageViewController: UIViewController, LanguageViewProtocol {
     
     private var backgroundImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(resource: .screenshot20250409At101528Pm)
+        imageView.image = UIImage(resource: .background)
         imageView.contentMode = .scaleAspectFill
         imageView.alpha = 0.8
         return imageView

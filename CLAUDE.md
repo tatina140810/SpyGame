@@ -239,8 +239,21 @@ OpenAI ключ из клиента полностью удалён.
   Countries, TV Shows, Music — добавлены.
 - `29d3017` — Themes UI: динамический список со скроллом (раньше было
   6 хардкод-кнопок).
-- **Текущий коммит** — удаление OpenAI ключа из клиента, заготовка
-  backend/, InfoPlist.strings × 3, удаление Pods/, обновление CLAUDE.md.
+- `59b22d8` — удаление OpenAI ключа из клиента, заготовка backend/,
+  InfoPlist.strings × 3, удаление Pods/, обновление CLAUDE.md.
+- `c13e6c6` — backendURL подставлен (Vercel deploy), prompt в backend
+  чище (gpt-4o-mini).
+- `f9309c7` — paywall переделан в стиль приложения, fix зависания
+  кнопки «Добавь свою тему» (синхронный `PremiumIAP.isUnlocked()`
+  вместо async).
+- **Текущий коммит** — App Store submission prep:
+  - `docs/privacy.md` + `docs/index.md` для GitHub Pages (публичный URL).
+  - Промт backend ужесточён: запрет на adult/violent/illegal/hateful
+    контент, при подозрительной теме возвращается пустой массив.
+  - Фоновое изображение переименовано: `Screenshot 2025-04-09 at
+    10.15.28 pm.png` → `background.png`, asset `.background`,
+    все 15 ссылок в Swift обновлены.
+  - `CURRENT_PROJECT_VERSION` 1 → 2.
 
 ## Полезные точки входа для нового агента
 
