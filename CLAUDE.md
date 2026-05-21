@@ -38,7 +38,8 @@ iOS-приложение «Шпион»: компанейская игра «о�
 - `Models/` — `GameModel.swift` (UserDefaults-расширения),
   `Theme.swift` (12 встроенных тем + custom theme storage).
 - `Helpers/` — `LanguageManager`, `GradientExtension` (neon-градиент карточек),
-  `LocalizedExtension` (`String.localized`), `UserDefaultsExtension`.
+  `LocalizedExtension` (`String.localized`), `UserDefaultsExtension`,
+  `AppVersionChecker` (iTunes Lookup-based update prompt, throttle 24h).
 - `Views/` — синглплеер VC + Presenter:
   - `MainView/` — главный экран (кнопки «Новая игра», «Играть вместе»,
     «Язык», «Правила»)
@@ -254,6 +255,13 @@ OpenAI ключ из клиента полностью удалён.
     10.15.28 pm.png` → `background.png`, asset `.background`,
     все 15 ссылок в Swift обновлены.
   - `CURRENT_PROJECT_VERSION` 1 → 2.
+- **Текущий коммит** — App Store version check на старте сессии.
+  `Helpers/AppVersionChecker.swift` дёргает `itunes.apple.com/lookup?bundleId=...`
+  один раз в 24 часа, и если в Store есть более новая версия чем
+  `CFBundleShortVersionString` — показывает не-блокирующий алерт с
+  Update / Later. Update открывает `trackViewUrl` в App Store. Чек
+  вызывается из `SceneDelegate.sceneDidBecomeActive` (window и root VC
+  уже точно есть, throttle защищает от спама).
 
 ## Полезные точки входа для нового агента
 

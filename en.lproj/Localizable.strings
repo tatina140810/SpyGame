@@ -630,3 +630,8 @@ Unlock the full version to continue!";
 "word_tattoo" = "Tattoo";
 
 "backend_not_configured" = "Custom-topic generation is temporarily unavailable. Please try again later.";
+
+"update_available_title" = "Update available";
+"update_available_message" = "A new version (%@) of Spy Hunt is available on the App Store. Please update to keep playing with friends on the latest version.";
+"update_button" = "Update";
+"later_button" = "Later";

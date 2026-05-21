@@ -19,6 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidBecomeActive(_ scene: UIScene) {
+        // Ask App Store once per 24 hours whether a newer version is available;
+        // if so, show a non-blocking update prompt. Throttle lives inside the checker.
+        if let root = window?.rootViewController {
+            AppVersionChecker.checkAndPromptIfNeeded(from: root)
+        }
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
