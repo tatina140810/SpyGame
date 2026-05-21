@@ -35,9 +35,17 @@ export default async function handler(req, res) {
   }
 
   const prompt =
-    `Generate exactly 40 single-concept words on the topic "${topic.trim()}" ` +
-    `in language code "${safeLanguage}". Return only a JSON array of strings, ` +
-    `no surrounding text, no numbering, no explanations.`;
+    `You are generating words for the party game "Spy Hunt".\n` +
+    `Topic: "${topic.trim()}".\n` +
+    `Language code: "${safeLanguage}".\n\n` +
+    `Rules:\n` +
+    `- Exactly 40 distinct items.\n` +
+    `- Each item is a single noun in the nominative singular (no verbs, no adjectives, no adverbs).\n` +
+    `- No duplicates and no different inflected forms of the same word.\n` +
+    `- Avoid multi-word phrases. Single common compounds (like "ice cream") are allowed only if there is no shorter equivalent.\n` +
+    `- Every item must be a concept that an average adult in the target language would recognise instantly.\n` +
+    `- Each item should have several obvious associations so a player can hint at it without saying it.\n\n` +
+    `Return ONLY a JSON array of 40 strings. No surrounding text, no numbering, no explanations, no markdown.`;
 
   try {
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -47,9 +55,9 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7
+        temperature: 0.6
       })
     });
 

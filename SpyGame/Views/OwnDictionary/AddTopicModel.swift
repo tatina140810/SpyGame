@@ -20,7 +20,7 @@ private enum RequestLimitKeys {
 /// Until this is non-nil, custom-topic generation returns an empty list and the UI
 /// shows the `backend_not_configured` message. Never embed the OpenAI key here —
 /// the binary is public via the App Store.
-private let backendURL: URL? = nil
+private let backendURL: URL? = URL(string: "https://spy-game-lac-seven.vercel.app/api/generate-words")
 
 final class AddTopicModel: AddTopicModelProtocol {
     private let maxRequests = 5
