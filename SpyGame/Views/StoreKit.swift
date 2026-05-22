@@ -45,14 +45,21 @@ enum PremiumIAP {
     }
 
     /// Refreshes the cached unlock flag from StoreKit. Safe to call from anywhere.
+    ///
+    /// Only *confirms* unlocked when StoreKit verifies an entitlement. We deliberately
+    /// do NOT call `lockFullVersion()` when no entitlement is found — that would wipe
+    /// the cached premium state whenever StoreKit is unreachable (user offline,
+    /// simulator launched without a StoreKit Testing config, etc.).
+    ///
+    /// Real revocations and refunds are delivered through `Transaction.updates` and
+    /// handled inside `startTransactionListener()` — that's the only place where the
+    /// user is marked back to non-premium.
     @discardableResult
     static func refreshUnlockedState() async -> Bool {
         let unlocked = await hasVerifiedEntitlement()
-        await MainActor.run {
-            if unlocked {
+        if unlocked {
+            await MainActor.run {
                 UserDefaults.standard.unlockFullVersion()
-            } else {
-                UserDefaults.standard.lockFullVersion()
             }
         }
         return unlocked
