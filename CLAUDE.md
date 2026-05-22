@@ -142,6 +142,35 @@ to:animated:)` (extension в `MultiplayerSession.swift`). Обрезает ст�
 `self` и приклеивает хвост — позволяет рестартить раунд, оставляя лобби в
 основании стека.
 
+## Реклама (Yandex Mobile Ads)
+
+- SDK: `YandexMobileAds` 8.0 через CocoaPods (см. `Podfile`).
+- Обёртка: `Helpers/AdManager.swift` — singleton, все методы no-op если
+  `PremiumIAP.isUnlocked()` → premium-юзерам реклама не показывается.
+- **Demo ad units сейчас**: `demo-banner-yandex`, `demo-interstitial-yandex`
+  (публичные тестовые ID Yandex). После регистрации в Yandex Partner Network
+  (https://partner.yandex.com) и создания реальных ad units — заменить две
+  константы в `AdManager.swift` на свои строки вида `R-M-XXXXXX-Y`.
+- Где показывается:
+  - **Banner** — внизу `TimerViewController` и `MultiplayerTimerViewController`
+    (через `AdManager.shared.attachBanner(to:viewController:)`).
+  - **Interstitial** — `MainViewController.viewDidAppear` через
+    `AdManager.shared.showInterstitialIfReady(from:)`, гейтом `playedGamesCount > 0`
+    (никогда на cold-start, только после первой игры).
+- **Throttle interstitial**: один раз в 3 минуты (timestamp в UserDefaults).
+- **SKAdNetworkItems** в `Info.plist` — 11 IDs основных сетей-партнёров Yandex.
+- **NSUserTrackingUsageDescription** — для App Tracking Transparency диалога
+  (если будете запрашивать IDFA для targeted ads).
+
+API SDK 8.0 (важно — отличается от старого 6.x туториала):
+- Класс: `BannerAdView` (Swift name, ObjC `YMABannerAdView`).
+- Размер: `BannerAdSize.inline(width:maxHeight:)` / `BannerAdSize.fixed(width:height:)`.
+- Запрос: `AdRequest(adUnitID:)`.
+- SDK init: `YandexAds.initializeSDK { ... }`.
+- Interstitial: `InterstitialAdLoader.loadAd(with:completionHandler:)` с
+  `Result<InterstitialAd, Error>` enum в коллбеке.
+- `AdManager` помечен `@MainActor` — методы `show(from:)` требуют main actor.
+
 ## Бэкенд (генерация тем)
 
 Папка `backend/` в корне репозитория.
@@ -160,16 +189,19 @@ OpenAI ключ из клиента полностью удалён.
 
 ## Команды
 
-- Открыть в Xcode: `~/Projects/SpyGame/SpyGame.xcodeproj`.
-- Сборка через CLI (используется в этой сессии):
+- Открыть в Xcode: `~/Projects/SpyGame/SpyGame.xcworkspace` **(не .xcodeproj!)** —
+  проект теперь использует CocoaPods для Yandex Mobile Ads, поэтому работа идёт
+  через workspace.
+- Сборка через CLI:
   ```bash
   cd ~/Projects/SpyGame
-  xcodebuild -project SpyGame.xcodeproj -scheme SpyGame \
+  xcodebuild -workspace SpyGame.xcworkspace -scheme SpyGame \
     -destination 'platform=iOS Simulator,id=<UDID>' \
     -derivedDataPath /tmp/SpyGameBuild build
   xcrun simctl install <UDID> /tmp/SpyGameBuild/Build/Products/Debug-iphonesimulator/SpyGame.app
   xcrun simctl launch <UDID> kg.tatina.SpyFinder
   ```
+- Обновление подов: `pod install` из корня репо. `Pods/` в `.gitignore`.
   iPhone 17 Pro UDID, который использовали в этой сессии:
   `712AB4D1-94AA-478D-933A-C7C24E7A79C7`. Список симов:
   `xcrun simctl list devices available | grep iPhone`.

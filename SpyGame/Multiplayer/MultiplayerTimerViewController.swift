@@ -112,6 +112,8 @@ final class MultiplayerTimerViewController: UIViewController {
         timerView.onTimerFinished = { [weak self] in
             self?.showEndGameLabel()
         }
+        AdManager.shared.attachBanner(to: view, viewController: self)
+        UserDefaults.standard.incrementPlayedGames()
     }
 
     override func viewWillAppear(_ animated: Bool) {

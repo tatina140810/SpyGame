@@ -88,6 +88,10 @@ class TimerViewController: UIViewController, TimerViewProtocol {
         setupUI()
         presenter?.viewDidLoad()
         UIApplication.shared.isIdleTimerDisabled = true
+        // Banner at the bottom — premium users get no-op inside AdManager.
+        AdManager.shared.attachBanner(to: view, viewController: self)
+        // Count games for the interstitial gate on MainViewController.
+        UserDefaults.standard.incrementPlayedGames()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

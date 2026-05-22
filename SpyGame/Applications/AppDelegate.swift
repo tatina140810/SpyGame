@@ -10,6 +10,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         transactionListener = PremiumIAP.startTransactionListener()
         Task { await PremiumIAP.refreshUnlockedState() }
+        // Yandex Mobile Ads — no-op if premium is already unlocked. AdManager
+        // also preloads the first interstitial inside the SDK init callback.
+        AdManager.shared.startSDK()
         return true
     }
 
