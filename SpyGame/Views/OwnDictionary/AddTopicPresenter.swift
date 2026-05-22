@@ -55,35 +55,44 @@ class AddTopicPresenter: AddTopicPresenterProtocol {
         model.generateWords(topic: topic, language: selectedLanguage) { [weak self] words in
             guard let self = self else { return }
             self.generatedWords = words
-            
+
             DispatchQueue.main.async {
-                
+                // Backend may have returned [] (e.g. unsafe topic blocked by the
+                // content policy, or transient OpenAI failure). Show a clear error
+                // instead of "Generated 0 words" so the user knows to retry.
+                if words.isEmpty {
+                    self.view?.showAlert(title: "error".localized,
+                                         message: "could_not_generate_words".localized)
+                    return
+                }
+
                 self.view?.showGeneratedWords(words)
-                
                 let message = "words_generated_for_topic".localized(with: words.count, topic)
-                
                 self.view?.showAlert(title: "success_title".localized, message: message)
-                
-                
-                
                 self.delegate?.updateCustomButtonTitle(to: topic)
-                
             }
-            
         }
     }
     
     func didTapSave(topic: String?) {
         guard let topic = topic?.trimmingCharacters(in: .whitespacesAndNewlines), !topic.isEmpty else {
-            view?.showAlert(title: "error", message: "enter_topic".localized)
+            view?.showAlert(title: "error".localized, message: "enter_topic".localized)
             return
         }
-        
+
         if !isValidTopicInput(topic) {
-            view?.showAlert(title: "error", message: "invalid_topic_format".localized)
+            view?.showAlert(title: "error".localized, message: "invalid_topic_format".localized)
             return
         }
-        
+
+        // Don't allow saving an empty / one-word theme — game would show the
+        // literal "word" fallback string on every card otherwise.
+        guard generatedWords.count >= 10 else {
+            view?.showAlert(title: "error".localized,
+                            message: "generate_words_first".localized)
+            return
+        }
+
         themeUpdater.saveCustomTheme(words: generatedWords)
         themeUpdater.selectCustomTheme(named: "theme_custom", title: topic)
         delegate?.didCreateTopic(name: topic, words: generatedWords, language: selectedLanguage)

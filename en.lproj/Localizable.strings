@@ -635,3 +635,6 @@ Unlock the full version to continue!";
 "update_available_message" = "A new version (%@) of Spy Hunt is available on the App Store. Please update to keep playing with friends on the latest version.";
 "update_button" = "Update";
 "later_button" = "Later";
+
+"could_not_generate_words" = "Couldn't generate words for this topic. Please try a different topic.";
+"generate_words_first" = "Generate words with the Request button before saving the topic.";
