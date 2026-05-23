@@ -10,7 +10,7 @@
 		<string>_spyhunt-v1._udp</string>
 	</array>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Allow tracking to receive better personalised ads. You can always opt out in settings.</string>
+	<string>We use this to show you relevant ads</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict><key>SKAdNetworkIdentifier</key><string>mtkv5xtk9e.skadnetwork</string></dict>

@@ -12,10 +12,10 @@ final class AdManager: NSObject {
 
     static let shared = AdManager()
 
-    // MARK: - Test ad units (replace with real ones in production)
+    // MARK: - Ad units
 
-    private let bannerAdUnitID = "demo-banner-yandex"
-    private let interstitialAdUnitID = "demo-interstitial-yandex"
+    private let bannerAdUnitID = "R-M-15706877-1"
+    private let interstitialAdUnitID = "R-M-15706877-1"
 
     // MARK: - Interstitial throttle
 
@@ -43,12 +43,16 @@ final class AdManager: NSObject {
 
     // MARK: - Banner
 
+    /// Standard 320x50 banner; callers must reserve at least `bannerHeight` of space
+    /// at the bottom of their layout so it doesn't cover interactive UI.
+    static let bannerHeight: CGFloat = 50
+    static let bannerWidth: CGFloat = 320
+
     @discardableResult
     func attachBanner(to container: UIView, viewController: UIViewController) -> BannerAdView? {
         guard !PremiumIAP.isUnlocked() else { return nil }
 
-        let width = container.bounds.width > 0 ? container.bounds.width : UIScreen.main.bounds.width
-        let adSize = BannerAdSize.inline(width: width, maxHeight: 90)
+        let adSize = BannerAdSize.fixed(width: Self.bannerWidth, height: Self.bannerHeight)
         let adView = BannerAdView(adSize: adSize)
         adView.delegate = self
         adView.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +60,9 @@ final class AdManager: NSObject {
         container.addSubview(adView)
         NSLayoutConstraint.activate([
             adView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            adView.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor)
+            adView.bottomAnchor.constraint(equalTo: container.safeAreaLayoutGuide.bottomAnchor),
+            adView.widthAnchor.constraint(equalToConstant: Self.bannerWidth),
+            adView.heightAnchor.constraint(equalToConstant: Self.bannerHeight)
         ])
 
         let request = AdRequest(adUnitID: bannerAdUnitID)

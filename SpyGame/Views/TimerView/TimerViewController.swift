@@ -131,7 +131,10 @@ class TimerViewController: UIViewController, TimerViewProtocol {
             cardView.heightAnchor.constraint(equalToConstant: 600),
             cardView.widthAnchor.constraint(equalToConstant: 340),
             
-            newGameButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            newGameButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -40 - (PremiumIAP.isUnlocked() ? 0 : AdManager.bannerHeight + 20)
+            ),
             newGameButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             newGameButton.heightAnchor.constraint(equalToConstant: 50),
             newGameButton.widthAnchor.constraint(equalToConstant: 240)
