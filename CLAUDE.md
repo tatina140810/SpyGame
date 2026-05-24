@@ -209,6 +209,20 @@ OpenAI ключ из клиента полностью удалён.
 - Для теста мультиплеера — 2-3 симулятора одновременно (boot + install +
   launch на каждом).
 
+## Решения по App Store
+
+- **Age Rating: 17+** (решение от 2026-05-25). Не убирать `theme_adult`
+  из `Theme.swift` — это намеренный контент, рассчитанный на 17+.
+  При сабмите в App Store Connect → App Information → Age Rating
+  отвечать честно: «Sexual Content and Nudity = Frequent/Intense»,
+  «Mature/Suggestive Themes = Frequent/Intense», «Alcohol, Tobacco,
+  or Drug Use = Infrequent/Mild» (бар, шампанское в той же теме),
+  «Gambling = Infrequent/Mild» (казино в той же теме).
+- **Реклама**: указать Yandex Mobile Ads в App Privacy → Data
+  Collection как третью сторону.
+- **Privacy Policy URL**: `https://tatina140810.github.io/SpyGame/privacy.html`
+  (после включения Pages → main / `/docs`).
+
 ## Известные подводные камни
 
 1. **iCloud Drive копия проекта** существует, но **не использовать**. Она
