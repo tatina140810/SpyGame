@@ -47,6 +47,7 @@ class LanguageViewController: UIViewController, LanguageViewProtocol {
         presenter?.viewDidLoad()
         setupUI()
         updateLanguageButtonStyles(selected: LanguageManager.shared.currentLanguage)
+        installAdBanner()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

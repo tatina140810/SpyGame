@@ -281,6 +281,7 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         presenter = PlayersSetupPresenter(view: self)
         setupUI()
         applySavedSettings()
+        installAdBanner()
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "gear"),
             style: .plain,
@@ -320,7 +321,10 @@ class PlayersSetupViewController: UIViewController, PlayersSetupViewProtocol {
         
         view.addSubview(startButton)
         NSLayoutConstraint.activate([
-            startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            startButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -40 - (PremiumIAP.isUnlocked() ? 0 : AdManager.bannerHeight + 20)
+            ),
             startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             startButton.heightAnchor.constraint(equalToConstant: 50),
             startButton.widthAnchor.constraint(equalToConstant: 240)

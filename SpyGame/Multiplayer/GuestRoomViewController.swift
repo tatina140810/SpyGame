@@ -92,6 +92,7 @@ final class GuestRoomViewController: UIViewController {
         applyStage()
         session.delegate = self
         hideKeyboardWhenTappedAround()
+        installAdBanner()
     }
 
     override func viewDidLayoutSubviews() {

@@ -146,6 +146,7 @@ final class MultiplayerCardViewController: UIViewController {
         playerNumberLabel.text = "player_of".localized(with: role.playerNumber, role.totalPlayers)
         wordLabel.text = role.word
         session.delegate = self
+        installAdBanner()
         UIApplication.shared.isIdleTimerDisabled = true
     }
 
@@ -190,7 +191,10 @@ final class MultiplayerCardViewController: UIViewController {
             cardView.heightAnchor.constraint(equalToConstant: 540),
             cardView.widthAnchor.constraint(equalToConstant: 340),
 
-            readyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            readyButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -40 - (PremiumIAP.isUnlocked() ? 0 : AdManager.bannerHeight + 20)
+            ),
             readyButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             readyButton.widthAnchor.constraint(equalToConstant: 240),
             readyButton.heightAnchor.constraint(equalToConstant: 50),

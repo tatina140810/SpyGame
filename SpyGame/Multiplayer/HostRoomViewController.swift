@@ -126,6 +126,7 @@ final class HostRoomViewController: UIViewController {
         session.delegate = self
         session.maxAllowedPeers = PremiumIAP.isUnlocked() ? 14 : 3
         session.startHosting(roomCode: roomCode)
+        installAdBanner()
     }
 
     @objc private func handleLeaveRoom() {
@@ -175,7 +176,10 @@ final class HostRoomViewController: UIViewController {
             cardView.widthAnchor.constraint(equalToConstant: 340),
             cardView.heightAnchor.constraint(equalToConstant: 600),
 
-            startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            startButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -40 - (PremiumIAP.isUnlocked() ? 0 : AdManager.bannerHeight + 20)
+            ),
             startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             startButton.widthAnchor.constraint(equalToConstant: 240),
             startButton.heightAnchor.constraint(equalToConstant: 50)

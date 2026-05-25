@@ -96,6 +96,7 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
         setupUI()
         presenter?.viewDidLoad()
         highlightSelectedThemes()
+        installAdBanner()
     }
 
     override func viewWillAppear(_ animated: Bool) {

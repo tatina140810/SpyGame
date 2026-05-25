@@ -12,10 +12,12 @@ final class AdManager: NSObject {
 
     static let shared = AdManager()
 
-    // MARK: - Ad units
+    // MARK: - Ad units (from Yandex Partner Network)
 
+    /// Banner placement (Активно in Yandex Partner).
     private let bannerAdUnitID = "R-M-15706877-1"
-    private let interstitialAdUnitID = "R-M-15706877-1"
+    /// Interstitial placement (Межстраничная реклама).
+    private let interstitialAdUnitID = "R-M-15706877-2"
 
     // MARK: - Interstitial throttle
 
@@ -26,6 +28,18 @@ final class AdManager: NSObject {
 
     private var interstitialLoader: InterstitialAdLoader?
     private var loadedInterstitial: InterstitialAd?
+
+    /// Called once after the interstitial is dismissed (or fails to show / is skipped),
+    /// so a caller like "New Game" can chain navigation right after the ad.
+    private var interstitialDismissHandler: (() -> Void)?
+
+    // MARK: - SDK init queue
+
+    /// Yandex SDK silently ignores `loadAd` calls made before `initializeSDK`
+    /// finishes. We queue banner load requests until init completes.
+    private var sdkInitialized = false
+    private var pendingBanners: [(BannerAdView, AdRequest)] = []
+    private var pendingInterstitialLoad = false
 
     private override init() {
         super.init()
@@ -41,11 +55,23 @@ final class AdManager: NSObject {
         print("[AdManager] startSDK called, isUnlocked=false, initialising SDK...")
         #endif
         YandexAds.initializeSDK { [weak self] in
-            #if DEBUG
-            print("[AdManager] SDK initialised, preloading interstitial")
-            #endif
-            Task { @MainActor in self?.preloadInterstitial() }
+            Task { @MainActor in
+                guard let self = self else { return }
+                #if DEBUG
+                print("[AdManager] SDK initialised, flushing \(self.pendingBanners.count) queued banner(s)")
+                #endif
+                self.sdkInitialized = true
+                self.flushPendingBanners()
+                self.preloadInterstitial()
+            }
         }
+    }
+
+    private func flushPendingBanners() {
+        for (view, request) in pendingBanners {
+            view.loadAd(with: request)
+        }
+        pendingBanners.removeAll()
     }
 
     // MARK: - Banner
@@ -78,10 +104,17 @@ final class AdManager: NSObject {
         ])
 
         let request = AdRequest(adUnitID: bannerAdUnitID)
-        #if DEBUG
-        print("[AdManager] attachBanner: loading \(bannerAdUnitID) into \(type(of: viewController))")
-        #endif
-        adView.loadAd(with: request)
+        if sdkInitialized {
+            #if DEBUG
+            print("[AdManager] attachBanner: load now (\(bannerAdUnitID)) in \(type(of: viewController))")
+            #endif
+            adView.loadAd(with: request)
+        } else {
+            #if DEBUG
+            print("[AdManager] attachBanner: queued (SDK not ready) in \(type(of: viewController))")
+            #endif
+            pendingBanners.append((adView, request))
+        }
         return adView
     }
 
@@ -108,18 +141,31 @@ final class AdManager: NSObject {
         }
     }
 
-    func showInterstitialIfReady(from viewController: UIViewController) {
-        guard !PremiumIAP.isUnlocked() else { return }
-
-        let last = UserDefaults.standard.double(forKey: lastInterstitialKey)
-        let elapsed = Date().timeIntervalSince1970 - last
-        guard last == 0 || elapsed >= interstitialMinInterval else { return }
-
-        guard let ad = loadedInterstitial else {
-            preloadInterstitial()
+    /// Show interstitial if loaded and throttle elapsed. `onDismiss` always fires —
+    /// either after the user closes the ad, or immediately when the ad is skipped
+    /// (premium user, throttle window, no preloaded ad). Callers chain navigation
+    /// in `onDismiss` so the user never gets stuck if the ad doesn't show.
+    func showInterstitialIfReady(from viewController: UIViewController,
+                                 onDismiss: (() -> Void)? = nil) {
+        guard !PremiumIAP.isUnlocked() else {
+            onDismiss?()
             return
         }
 
+        let last = UserDefaults.standard.double(forKey: lastInterstitialKey)
+        let elapsed = Date().timeIntervalSince1970 - last
+        guard last == 0 || elapsed >= interstitialMinInterval else {
+            onDismiss?()
+            return
+        }
+
+        guard let ad = loadedInterstitial else {
+            preloadInterstitial()
+            onDismiss?()
+            return
+        }
+
+        interstitialDismissHandler = onDismiss
         ad.show(from: viewController)
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: lastInterstitialKey)
         loadedInterstitial = nil
@@ -149,18 +195,34 @@ extension AdManager: BannerAdViewDelegate {
 
 // MARK: - InterstitialAdDelegate
 
+// MARK: - UIViewController convenience
+
+extension UIViewController {
+    /// Adds a Yandex banner to the bottom of this VC. Safe to call from
+    /// `viewDidLoad` — `AdManager` queues the load if the SDK isn't initialised
+    /// yet, and the call is a no-op for premium users.
+    @discardableResult
+    func installAdBanner() -> BannerAdView? {
+        return AdManager.shared.attachBanner(to: view, viewController: self)
+    }
+}
+
 extension AdManager: InterstitialAdDelegate {
     func interstitialAd(_ interstitialAd: InterstitialAd, didFailToShow error: Error) {
         #if DEBUG
         print("[AdManager] interstitial show failed: \(error.localizedDescription)")
         #endif
         loadedInterstitial = nil
+        interstitialDismissHandler?()
+        interstitialDismissHandler = nil
     }
 
     func interstitialAdDidShow(_ interstitialAd: InterstitialAd) {}
 
     func interstitialAdDidDismiss(_ interstitialAd: InterstitialAd) {
         loadedInterstitial = nil
+        interstitialDismissHandler?()
+        interstitialDismissHandler = nil
     }
 
     func interstitialAdDidClick(_ interstitialAd: InterstitialAd) {}

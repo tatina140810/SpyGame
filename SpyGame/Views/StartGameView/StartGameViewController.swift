@@ -119,6 +119,7 @@ class StartGameViewController: UIViewController, StartGameViewProtocol  {
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = ""
         setupUI()
+        installAdBanner()
 
         guard let settings = UserDefaults.standard.loadGameSettings() else {
             presentMissingSettingsAndPop()

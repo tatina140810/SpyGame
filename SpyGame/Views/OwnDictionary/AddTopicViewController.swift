@@ -94,6 +94,7 @@ class AddTopicViewController: UIViewController, AddTopicViewProtocol  {
         topicTextField.delegate = self
         hideKeyboardWhenTappedAround()
         overrideUserInterfaceStyle = .light
+        installAdBanner()
     }
     
     override func viewDidLayoutSubviews() {

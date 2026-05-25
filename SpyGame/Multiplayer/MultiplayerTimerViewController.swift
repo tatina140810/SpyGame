@@ -112,7 +112,7 @@ final class MultiplayerTimerViewController: UIViewController {
         timerView.onTimerFinished = { [weak self] in
             self?.showEndGameLabel()
         }
-        AdManager.shared.attachBanner(to: view, viewController: self)
+        installAdBanner()
         UserDefaults.standard.incrementPlayedGames()
     }
 
@@ -251,8 +251,15 @@ final class MultiplayerTimerViewController: UIViewController {
 
     @objc private func handleNewGame() {
         guard isHost else { return }
-        // Stay connected — find the lobby below us in the stack and ask it to start the
-        // next round. Guests learn about it via the regular `gameStart` message.
+        // Run the interstitial first; trigger the next round only after dismiss
+        // (or immediately for premium / throttled / no-fill). Guests learn about
+        // the new round via the regular `gameStart` message.
+        AdManager.shared.showInterstitialIfReady(from: self) { [weak self] in
+            self?.proceedToNewRound()
+        }
+    }
+
+    private func proceedToNewRound() {
         if let hostRoom = navigationController?.viewControllers.first(where: { $0 is HostRoomViewController }) as? HostRoomViewController {
             hostRoom.restartGame()
         } else {

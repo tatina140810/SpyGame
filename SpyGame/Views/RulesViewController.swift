@@ -30,6 +30,7 @@ class RulesViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = ""
         setupUI()
+        installAdBanner()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

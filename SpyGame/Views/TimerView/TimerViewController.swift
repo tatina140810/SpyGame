@@ -89,7 +89,7 @@ class TimerViewController: UIViewController, TimerViewProtocol {
         presenter?.viewDidLoad()
         UIApplication.shared.isIdleTimerDisabled = true
         // Banner at the bottom — premium users get no-op inside AdManager.
-        AdManager.shared.attachBanner(to: view, viewController: self)
+        installAdBanner()
         // Count games for the interstitial gate on MainViewController.
         UserDefaults.standard.incrementPlayedGames()
     }
@@ -229,17 +229,19 @@ class TimerViewController: UIViewController, TimerViewProtocol {
     }
     
     @objc private func handleNewGameButtonTapped() {
-        guard let settings = UserDefaults.standard.loadGameSettings() else {
-            return
+        // Show interstitial first; navigate to the new game in onDismiss so the
+        // user can't tap through the ad. onDismiss also fires immediately for
+        // premium users / when throttle blocks the ad / when nothing is preloaded.
+        AdManager.shared.showInterstitialIfReady(from: self) { [weak self] in
+            self?.proceedToNewGame()
         }
+    }
 
+    private func proceedToNewGame() {
+        guard UserDefaults.standard.loadGameSettings() != nil else { return }
         let loadedWords = UserDefaults.standard.stringArray(forKey: "last_selected_words") ?? []
         let newGameVC = StartGameViewController(words: loadedWords)
-
-        guard let nav = navigationController else {
-            return
-        }
-
+        guard let nav = navigationController else { return }
         if let setupVC = nav.viewControllers.first(where: { $0 is PlayersSetupViewController }) {
             nav.popToViewController(setupVC, animated: false)
             nav.pushViewController(newGameVC, animated: true)

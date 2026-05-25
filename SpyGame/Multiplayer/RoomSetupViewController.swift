@@ -40,6 +40,7 @@ final class RoomSetupViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.backButtonTitle = ""
         setupUI()
+        installAdBanner()
     }
 
     override func viewDidLayoutSubviews() {

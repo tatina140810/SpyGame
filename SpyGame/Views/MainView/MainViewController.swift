@@ -39,16 +39,7 @@ class MainViewController: UIViewController, MainViewProtocol {
         super.viewDidLoad()
         presenter = MainPresenter(view: self)
         setupUI()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // Only show interstitial if at least one game has finished — avoids
-        // hitting the user with an ad on cold start. AdManager itself throttles
-        // to at most once per 3 minutes and no-ops for premium users.
-        if UserDefaults.standard.playedGamesCount() > 0 {
-            AdManager.shared.showInterstitialIfReady(from: self)
-        }
+        installAdBanner()
     }
 
     override func viewDidLayoutSubviews() {
