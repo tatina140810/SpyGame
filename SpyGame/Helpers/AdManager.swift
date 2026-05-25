@@ -36,7 +36,14 @@ final class AdManager: NSObject {
     /// Call once from `AppDelegate.didFinishLaunchingWithOptions`.
     func startSDK() {
         guard !PremiumIAP.isUnlocked() else { return }
+        #if DEBUG
+        YandexAds.enableLogging()
+        print("[AdManager] startSDK called, isUnlocked=false, initialising SDK...")
+        #endif
         YandexAds.initializeSDK { [weak self] in
+            #if DEBUG
+            print("[AdManager] SDK initialised, preloading interstitial")
+            #endif
             Task { @MainActor in self?.preloadInterstitial() }
         }
     }
@@ -50,7 +57,12 @@ final class AdManager: NSObject {
 
     @discardableResult
     func attachBanner(to container: UIView, viewController: UIViewController) -> BannerAdView? {
-        guard !PremiumIAP.isUnlocked() else { return nil }
+        guard !PremiumIAP.isUnlocked() else {
+            #if DEBUG
+            print("[AdManager] attachBanner skipped: premium unlocked")
+            #endif
+            return nil
+        }
 
         let adSize = BannerAdSize.fixed(width: Self.bannerWidth, height: Self.bannerHeight)
         let adView = BannerAdView(adSize: adSize)
@@ -66,6 +78,9 @@ final class AdManager: NSObject {
         ])
 
         let request = AdRequest(adUnitID: bannerAdUnitID)
+        #if DEBUG
+        print("[AdManager] attachBanner: loading \(bannerAdUnitID) into \(type(of: viewController))")
+        #endif
         adView.loadAd(with: request)
         return adView
     }
@@ -115,7 +130,11 @@ final class AdManager: NSObject {
 // MARK: - BannerAdViewDelegate
 
 extension AdManager: BannerAdViewDelegate {
-    func bannerAdViewDidLoad(_ bannerAdView: BannerAdView) {}
+    func bannerAdViewDidLoad(_ bannerAdView: BannerAdView) {
+        #if DEBUG
+        print("[AdManager] banner LOADED — size: \(bannerAdView.frame.size)")
+        #endif
+    }
 
     func bannerAdViewDidFailLoading(_ bannerAdView: BannerAdView, error: Error) {
         #if DEBUG

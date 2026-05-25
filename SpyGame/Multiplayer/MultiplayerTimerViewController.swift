@@ -186,7 +186,7 @@ final class MultiplayerTimerViewController: UIViewController {
             timerView.widthAnchor.constraint(equalToConstant: 200),
             timerView.heightAnchor.constraint(equalToConstant: 200),
 
-            endGameLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -50),
+            endGameLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 30),
             endGameLabel.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
 
             pauseButton.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
