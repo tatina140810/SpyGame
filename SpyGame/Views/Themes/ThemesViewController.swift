@@ -129,7 +129,7 @@ class ThemesViewController: UIViewController, ThemesViewControllerProtocol {
             backgroundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            cardView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: PremiumIAP.isUnlocked() ? 0 : -AdManager.bannerHeight),
             cardView.heightAnchor.constraint(equalToConstant: 600),
             cardView.widthAnchor.constraint(equalToConstant: 340)
         ])
